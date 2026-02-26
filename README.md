@@ -1,141 +1,212 @@
-# 🚀 Welcome to Z.ai Code Scaffold
+# 🎭 ШаржМастер PRO | CaricatureMaster PRO
 
-A modern, production-ready web application scaffold powered by cutting-edge technologies, designed to accelerate your development with [Z.ai](https://chat.z.ai)'s AI-powered coding assistance.
+<div align="center">
+  
+![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.0-38B2AC?style=for-the-badge&logo=tailwind-css)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-## ✨ Technology Stack
+**AI-powered mobile web app for creating caricatures**
 
-This scaffold provides a robust foundation built with:
+Создавайте уникальные шаржи и делитесь ими в соцсетях! 🚀
 
-### 🎯 Core Framework
-- **⚡ Next.js 16** - The React framework for production with App Router
-- **📘 TypeScript 5** - Type-safe JavaScript for better developer experience
-- **🎨 Tailwind CSS 4** - Utility-first CSS framework for rapid UI development
+[Демо](#демо) • [Функции](#функции) • [Установка](#установка) • [Использование](#использование)
 
-### 🧩 UI Components & Styling
-- **🧩 shadcn/ui** - High-quality, accessible components built on Radix UI
-- **🎯 Lucide React** - Beautiful & consistent icon library
-- **🌈 Framer Motion** - Production-ready motion library for React
-- **🎨 Next Themes** - Perfect dark mode in 2 lines of code
-
-### 📋 Forms & Validation
-- **🎣 React Hook Form** - Performant forms with easy validation
-- **✅ Zod** - TypeScript-first schema validation
-
-### 🔄 State Management & Data Fetching
-- **🐻 Zustand** - Simple, scalable state management
-- **🔄 TanStack Query** - Powerful data synchronization for React
-- **🌐 Fetch** - Promise-based HTTP request
-
-### 🗄️ Database & Backend
-- **🗄️ Prisma** - Next-generation TypeScript ORM
-- **🔐 NextAuth.js** - Complete open-source authentication solution
-
-### 🎨 Advanced UI Features
-- **📊 TanStack Table** - Headless UI for building tables and datagrids
-- **🖱️ DND Kit** - Modern drag and drop toolkit for React
-- **📊 Recharts** - Redefined chart library built with React and D3
-- **🖼️ Sharp** - High performance image processing
-
-### 🌍 Internationalization & Utilities
-- **🌍 Next Intl** - Internationalization library for Next.js
-- **📅 Date-fns** - Modern JavaScript date utility library
-- **🪝 ReactUse** - Collection of essential React hooks for modern development
-
-## 🎯 Why This Scaffold?
-
-- **🏎️ Fast Development** - Pre-configured tooling and best practices
-- **🎨 Beautiful UI** - Complete shadcn/ui component library with advanced interactions
-- **🔒 Type Safety** - Full TypeScript configuration with Zod validation
-- **📱 Responsive** - Mobile-first design principles with smooth animations
-- **🗄️ Database Ready** - Prisma ORM configured for rapid backend development
-- **🔐 Auth Included** - NextAuth.js for secure authentication flows
-- **📊 Data Visualization** - Charts, tables, and drag-and-drop functionality
-- **🌍 i18n Ready** - Multi-language support with Next Intl
-- **🚀 Production Ready** - Optimized build and deployment settings
-- **🤖 AI-Friendly** - Structured codebase perfect for AI assistance
-
-## 🚀 Quick Start
-
-```bash
-# Install dependencies
-bun install
-
-# Start development server
-bun run dev
-
-# Build for production
-bun run build
-
-# Start production server
-bun start
-```
-
-Open [http://localhost:3000](http://localhost:3000) to see your application running.
-
-## 🤖 Powered by Z.ai
-
-This scaffold is optimized for use with [Z.ai](https://chat.z.ai) - your AI assistant for:
-
-- **💻 Code Generation** - Generate components, pages, and features instantly
-- **🎨 UI Development** - Create beautiful interfaces with AI assistance  
-- **🔧 Bug Fixing** - Identify and resolve issues with intelligent suggestions
-- **📝 Documentation** - Auto-generate comprehensive documentation
-- **🚀 Optimization** - Performance improvements and best practices
-
-Ready to build something amazing? Start chatting with Z.ai at [chat.z.ai](https://chat.z.ai) and experience the future of AI-powered development!
-
-## 📁 Project Structure
-
-```
-src/
-├── app/                 # Next.js App Router pages
-├── components/          # Reusable React components
-│   └── ui/             # shadcn/ui components
-├── hooks/              # Custom React hooks
-└── lib/                # Utility functions and configurations
-```
-
-## 🎨 Available Features & Components
-
-This scaffold includes a comprehensive set of modern web development tools:
-
-### 🧩 UI Components (shadcn/ui)
-- **Layout**: Card, Separator, Aspect Ratio, Resizable Panels
-- **Forms**: Input, Textarea, Select, Checkbox, Radio Group, Switch
-- **Feedback**: Alert, Toast (Sonner), Progress, Skeleton
-- **Navigation**: Breadcrumb, Menubar, Navigation Menu, Pagination
-- **Overlay**: Dialog, Sheet, Popover, Tooltip, Hover Card
-- **Data Display**: Badge, Avatar, Calendar
-
-### 📊 Advanced Data Features
-- **Tables**: Powerful data tables with sorting, filtering, pagination (TanStack Table)
-- **Charts**: Beautiful visualizations with Recharts
-- **Forms**: Type-safe forms with React Hook Form + Zod validation
-
-### 🎨 Interactive Features
-- **Animations**: Smooth micro-interactions with Framer Motion
-- **Drag & Drop**: Modern drag-and-drop functionality with DND Kit
-- **Theme Switching**: Built-in dark/light mode support
-
-### 🔐 Backend Integration
-- **Authentication**: Ready-to-use auth flows with NextAuth.js
-- **Database**: Type-safe database operations with Prisma
-- **API Client**: HTTP requests with Fetch + TanStack Query
-- **State Management**: Simple and scalable with Zustand
-
-### 🌍 Production Features
-- **Internationalization**: Multi-language support with Next Intl
-- **Image Optimization**: Automatic image processing with Sharp
-- **Type Safety**: End-to-end TypeScript with Zod validation
-- **Essential Hooks**: 100+ useful React hooks with ReactUse for common patterns
-
-## 🤝 Get Started with Z.ai
-
-1. **Clone this scaffold** to jumpstart your project
-2. **Visit [chat.z.ai](https://chat.z.ai)** to access your AI coding assistant
-3. **Start building** with intelligent code generation and assistance
-4. **Deploy with confidence** using the production-ready setup
+</div>
 
 ---
 
-Built with ❤️ for the developer community. Supercharged by [Z.ai](https://chat.z.ai) 🚀
+## 📸 Скриншоты
+
+<div align="center">
+  
+| Главная | Выбор стиля | Результат |
+|:-------:|:-----------:|:---------:|
+| 📱 | 🎨 | ✨ |
+
+</div>
+
+---
+
+## ✨ Функции
+
+### 🎨 10 стилей шаржей
+
+| Стиль | Описание |
+|-------|----------|
+| 😂 **Смешной** | Комичный и забавный |
+| 🎨 **Мультяшный** | Яркий, как в мультиках |
+| 🖼️ **Художественный** | Творческая стилизация |
+| 💥 **Комикс** | Стиль комиксов |
+| ✏️ **Скетч** | Рисунок карандашом |
+| 🌸 **Аниме** | Японская анимация |
+| 🎭 **Реалистичный** | Тонкая стилизация |
+| ⭐ **Звёздный** | Обложка журнала |
+| 🧸 **Чиби** | Милый чиби-стиль |
+| 🎭 **Гротеск** | Сюрреалистичный |
+
+### 📱 Социальные функции
+
+- **Шаринг в ВКонтакте** — прямая публикация
+- **Шаринг в Telegram** — отправка друзьям
+- **10 шаблонов подписей** — готовые тексты для постов
+- **6 рамок для соцсетей** — белая, чёрная, золотая, розовая, градиент
+- **Оптимизация 1080×1080** — идеально для ВК и Telegram
+
+### 📊 Геймификация
+
+- **12 уровней** — от Новичка до Всевышнего
+- **XP система** — зарабатывайте опыт за действия
+- **8 достижений** — разблокируйте награды
+- **Статистика** — отслеживайте прогресс
+- **Серия использования** — мотивация возвращаться
+
+---
+
+## 🚀 Установка
+
+### Требования
+
+- Node.js 18+
+- Bun или npm
+
+### Клонирование
+
+```bash
+git clone https://github.com/YOUR_USERNAME/caricature-master.git
+cd caricature-master
+```
+
+### Установка зависимостей
+
+```bash
+bun install
+# или
+npm install
+```
+
+### Запуск
+
+```bash
+bun run dev
+# или
+npm run dev
+```
+
+Откройте [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 🛠️ Технологии
+
+| Технология | Назначение |
+|------------|------------|
+| **Next.js 15** | React фреймворк |
+| **TypeScript** | Типизация |
+| **Tailwind CSS** | Стилизация |
+| **Framer Motion** | Анимации |
+| **shadcn/ui** | UI компоненты |
+| **z-ai-web-dev-sdk** | AI генерация изображений |
+
+---
+
+## 📁 Структура проекта
+
+```
+caricature-master/
+├── src/
+│   ├── app/
+│   │   ├── page.tsx          # Главная страница
+│   │   └── api/
+│   │       └── caricature/
+│   │           └── route.ts  # API для генерации
+│   ├── components/
+│   │   └── ui/               # UI компоненты
+│   ├── hooks/                # React хуки
+│   └── lib/                  # Утилиты
+├── public/                   # Статические файлы
+├── package.json
+└── README.md
+```
+
+---
+
+## 🎯 Использование
+
+1. **Загрузите фото** — из галереи или камеры
+2. **Выберите стиль** — 10 вариантов на выбор
+3. **Настройте интенсивность** — от нежного до экстремального
+4. **Добавьте рамку** — для красивого поста
+5. **Создайте шарж** — AI обработает за секунды
+6. **Поделитесь** — в ВК, Telegram или скачайте
+
+---
+
+## 🎮 XP Система
+
+| Действие | XP |
+|----------|-----|
+| Создать шарж | +25 XP |
+| Репост | +15 XP |
+| Лайк | +5 XP |
+| Достижение | +50-1000 XP |
+
+---
+
+## 🏆 Достижения
+
+| Достижение | Условие | XP |
+|------------|---------|-----|
+| 🎯 Первый шаг | Создать 1 шарж | 50 |
+| 🎨 Творец | Создать 10 шаржей | 100 |
+| 👑 Мастер | Создать 50 шаржей | 500 |
+| 🏆 Легенда | Создать 100 шаржей | 1000 |
+| ⭐ Популярный | Получить 10 лайков | 150 |
+| 🔥 Вирусный | Поделиться 5 раз | 200 |
+| 🌊 На волне | 3 дня подряд | 75 |
+| 🏃 Марафонец | 7 дней подряд | 200 |
+
+---
+
+## 📱 PWA Ready
+
+Приложение оптимизировано для мобильных устройств:
+- Responsive дизайн
+- Touch-friendly интерфейс
+- Работает оффлайн (история)
+- Можно добавить на главный экран
+
+---
+
+## 🤝 Вклад в проект
+
+Pull requests приветствуются! Для больших изменений откройте issue.
+
+1. Fork проекта
+2. Создайте ветку (`git checkout -b feature/AmazingFeature`)
+3. Commit изменения (`git commit -m 'Add AmazingFeature'`)
+4. Push в ветку (`git push origin feature/AmazingFeature`)
+5. Откройте Pull Request
+
+---
+
+## 📄 Лицензия
+
+MIT License — используйте свободно!
+
+---
+
+## 🙏 Благодарности
+
+- [z-ai-web-dev-sdk](https://z.ai) — AI генерация изображений
+- [shadcn/ui](https://ui.shadcn.com) — UI компоненты
+- [Framer Motion](https://framer.com/motion) — анимации
+
+---
+
+<div align="center">
+  
+**Создано с ❤️ для творчества**
+
+</div>
