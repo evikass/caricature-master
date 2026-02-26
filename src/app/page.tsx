@@ -24,22 +24,17 @@ import {
   Copy,
   Check,
   MessageSquare,
-  Instagram,
   Send,
-  Type,
   Frame,
-  Droplet,
   Heart,
-  Star,
   Trophy,
   Flame,
-  Gift,
   Crown,
   Zap,
-  TrendingUp,
-  Award,
-  Target,
-  BookOpen
+  BookOpen,
+  RefreshCw,
+  AlertCircle,
+  ImageIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -81,7 +76,7 @@ interface CaptionTemplate {
   category: 'funny' | 'cool' | 'cute' | 'viral';
 }
 
-// Extended styles
+// Extended styles with more variety
 const CARICATURE_STYLES: CaricatureStyle[] = [
   { id: 'funny', name: 'Funny', nameRu: 'Смешной', icon: '😂', description: 'Комичный и забавный' },
   { id: 'cartoon', name: 'Cartoon', nameRu: 'Мультяшный', icon: '🎨', description: 'Яркий мультяшный' },
@@ -92,7 +87,9 @@ const CARICATURE_STYLES: CaricatureStyle[] = [
   { id: 'realistic', name: 'Realistic', nameRu: 'Реалистичный', icon: '🎭', description: 'Тонкая стилизация' },
   { id: 'celebrity', name: 'Celebrity', nameRu: 'Звёздный', icon: '⭐', description: 'Обложка журнала' },
   { id: 'chibi', name: 'Chibi', nameRu: 'Чиби', icon: '🧸', description: 'Милый чиби-стиль' },
-  { id: 'grotesque', name: 'Grotesque', nameRu: 'Гротеск', icon: '🎭', description: 'Сюрреалистичный' },
+  { id: 'grotesque', name: 'Grotesque', nameRu: 'Гротеск', icon: '👹', description: 'Сюрреалистичный' },
+  { id: 'pixel', name: 'Pixel', nameRu: 'Пиксельный', icon: '👾', description: 'Ретро пиксель-арт' },
+  { id: 'watercolor', name: 'Watercolor', nameRu: 'Акварель', icon: '🎨', description: 'Мягкая акварель' },
 ];
 
 // Caption templates for social media
@@ -134,6 +131,14 @@ const FRAMES = [
 // Level thresholds
 const LEVEL_THRESHOLDS = [0, 100, 300, 600, 1000, 1500, 2200, 3000, 4000, 5500, 7500, 10000];
 
+// Generation steps for loading animation
+const GENERATION_STEPS = [
+  { id: 'analyze', text: 'Анализируем фото...', icon: '🔍' },
+  { id: 'features', text: 'Выделяем черты лица...', icon: '👤' },
+  { id: 'style', text: 'Применяем стиль...', icon: '🎨' },
+  { id: 'generate', text: 'Создаём шарж...', icon: '✨' },
+];
+
 export default function CaricatureApp() {
   // State
   const [activeTab, setActiveTab] = useState<'create' | 'history' | 'profile'>('create');
@@ -142,6 +147,7 @@ export default function CaricatureApp() {
   const [selectedStyle, setSelectedStyle] = useState<string>('funny');
   const [intensity, setIntensity] = useState<number>(50);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [generationStep, setGenerationStep] = useState<number>(0);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [zoom, setZoom] = useState<number>(1);
@@ -162,6 +168,7 @@ export default function CaricatureApp() {
   });
   const [showAchievement, setShowAchievement] = useState<string | null>(null);
   const [selectedHistoryItem, setSelectedHistoryItem] = useState<HistoryItem | null>(null);
+  const [isDownloading, setIsDownloading] = useState<boolean>(false);
   
   // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -169,8 +176,8 @@ export default function CaricatureApp() {
 
   // Load data from localStorage
   useEffect(() => {
-    const savedHistory = localStorage.getItem('caricature_history_v2');
-    const savedStats = localStorage.getItem('caricature_stats_v2');
+    const savedHistory = localStorage.getItem('caricature_history_v3');
+    const savedStats = localStorage.getItem('caricature_stats_v3');
     
     if (savedHistory) {
       try {
@@ -188,7 +195,7 @@ export default function CaricatureApp() {
       }
     }
     
-    const hasSeenTutorial = localStorage.getItem('caricature_tutorial_seen_v2');
+    const hasSeenTutorial = localStorage.getItem('caricature_tutorial_seen_v3');
     if (!hasSeenTutorial) {
       setShowTutorial(true);
     }
@@ -196,11 +203,11 @@ export default function CaricatureApp() {
 
   // Save data to localStorage
   useEffect(() => {
-    localStorage.setItem('caricature_history_v2', JSON.stringify(history));
+    localStorage.setItem('caricature_history_v3', JSON.stringify(history));
   }, [history]);
 
   useEffect(() => {
-    localStorage.setItem('caricature_stats_v2', JSON.stringify(stats));
+    localStorage.setItem('caricature_stats_v3', JSON.stringify(stats));
   }, [stats]);
 
   // Calculate level from XP
@@ -261,7 +268,6 @@ export default function CaricatureApp() {
         achievements: [...prev.achievements, ...newAchievements],
       }));
       
-      // Show first new achievement
       const achievement = ACHIEVEMENTS.find(a => a.id === newAchievements[0]);
       if (achievement) {
         setShowAchievement(achievement.name);
@@ -311,12 +317,18 @@ export default function CaricatureApp() {
     }
   }, []);
 
-  // Generate caricature
+  // Generate caricature with step animation
   const handleGenerate = useCallback(async () => {
     if (!selectedImage) return;
     
     setIsGenerating(true);
     setError(null);
+    setGenerationStep(0);
+    
+    // Animate through steps
+    const stepInterval = setInterval(() => {
+      setGenerationStep(prev => Math.min(prev + 1, GENERATION_STEPS.length - 1));
+    }, 1500);
     
     try {
       const response = await fetch('/api/caricature', {
@@ -335,7 +347,7 @@ export default function CaricatureApp() {
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate caricature');
+        throw new Error(data.error || 'Ошибка при генерации');
       }
       
       const caricatureImage = `data:image/png;base64,${data.image}`;
@@ -375,14 +387,15 @@ export default function CaricatureApp() {
     } catch (err: any) {
       setError(err.message || 'Ошибка при генерации');
     } finally {
+      clearInterval(stepInterval);
       setIsGenerating(false);
     }
   }, [selectedImage, selectedStyle, intensity, addXP]);
 
   // Download image (optimized for social media)
   const handleDownload = useCallback(async (imageData: string) => {
+    setIsDownloading(true);
     try {
-      // Create a canvas for optimization
       const img = new window.Image();
       img.crossOrigin = 'anonymous';
       
@@ -402,7 +415,6 @@ export default function CaricatureApp() {
             ctx.fillStyle = frame.id === 'gradient' ? '#ff6b6b' : frame.color;
             ctx.fillRect(0, 0, size, size);
             
-            // Draw image with padding for frame
             const padding = 20;
             ctx.drawImage(img, padding, padding, size - padding * 2, size - padding * 2);
           }
@@ -410,7 +422,6 @@ export default function CaricatureApp() {
           ctx.drawImage(img, 0, 0, size, size);
         }
         
-        // Download
         canvas.toBlob((blob) => {
           if (blob) {
             const url = URL.createObjectURL(blob);
@@ -428,35 +439,52 @@ export default function CaricatureApp() {
       img.src = imageData;
     } catch (err) {
       console.error('Download failed:', err);
+    } finally {
+      setTimeout(() => setIsDownloading(false), 500);
     }
   }, [selectedFrame]);
 
-  // Share to VK
-  const shareToVK = useCallback((imageData: string) => {
-    // VK sharing via URL
-    const text = encodeURIComponent(selectedCaption || 'Мой шарж!');
-    const vkUrl = `https://vk.com/share.php?comment=${text}&noparse=true`;
-    window.open(vkUrl, '_blank', 'width=600,height=400');
-    
-    setStats(prev => ({
-      ...prev,
-      totalShares: prev.totalShares + 1,
-    }));
-    addXP(15);
-  }, [selectedCaption, addXP]);
+  // Share to VK with image
+  const shareToVK = useCallback(async (imageData: string) => {
+    try {
+      // First download the image to device
+      await handleDownload(imageData);
+      
+      // Then open VK share dialog
+      const text = encodeURIComponent(selectedCaption || 'Мой шарж!');
+      const vkUrl = `https://vk.com/share.php?comment=${text}&noparse=true`;
+      window.open(vkUrl, '_blank', 'width=600,height=400');
+      
+      setStats(prev => ({
+        ...prev,
+        totalShares: prev.totalShares + 1,
+      }));
+      addXP(15);
+    } catch (err) {
+      console.error('VK share failed:', err);
+    }
+  }, [selectedCaption, addXP, handleDownload]);
 
-  // Share to Telegram
-  const shareToTelegram = useCallback((imageData: string) => {
-    const text = encodeURIComponent(selectedCaption || 'Мой шарж!');
-    const tgUrl = `https://t.me/share/url?url=&text=${text}`;
-    window.open(tgUrl, '_blank', 'width=600,height=400');
-    
-    setStats(prev => ({
-      ...prev,
-      totalShares: prev.totalShares + 1,
-    }));
-    addXP(15);
-  }, [selectedCaption, addXP]);
+  // Share to Telegram with image
+  const shareToTelegram = useCallback(async (imageData: string) => {
+    try {
+      // First download the image
+      await handleDownload(imageData);
+      
+      // Then open Telegram share dialog
+      const text = encodeURIComponent(selectedCaption || 'Мой шарж!');
+      const tgUrl = `https://t.me/share/url?url=&text=${text}`;
+      window.open(tgUrl, '_blank', 'width=600,height=400');
+      
+      setStats(prev => ({
+        ...prev,
+        totalShares: prev.totalShares + 1,
+      }));
+      addXP(15);
+    } catch (err) {
+      console.error('Telegram share failed:', err);
+    }
+  }, [selectedCaption, addXP, handleDownload]);
 
   // Copy caption
   const copyCaption = useCallback(async () => {
@@ -500,7 +528,7 @@ export default function CaricatureApp() {
   // Close tutorial
   const closeTutorial = useCallback(() => {
     setShowTutorial(false);
-    localStorage.setItem('caricature_tutorial_seen_v2', 'true');
+    localStorage.setItem('caricature_tutorial_seen_v3', 'true');
   }, []);
 
   // Get level name
@@ -519,18 +547,24 @@ export default function CaricatureApp() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-950 via-violet-900 to-indigo-950 text-white overflow-x-hidden">
-      {/* Status bar spacer */}
-      <div className="h-safe-top" />
+      {/* Background decorations */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-pink-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-violet-500/10 rounded-full blur-3xl" />
+      </div>
       
       {/* Main content */}
-      <main className="pb-24">
+      <main className="pb-24 relative">
         {/* Header */}
         <header className="sticky top-0 z-40 bg-black/40 backdrop-blur-xl border-b border-white/10">
           <div className="px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-pink-500 via-purple-500 to-violet-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
+              <motion.div 
+                className="w-11 h-11 rounded-xl bg-gradient-to-br from-pink-500 via-purple-500 to-violet-600 flex items-center justify-center shadow-lg shadow-purple-500/30"
+                whileHover={{ scale: 1.05 }}
+              >
                 <Wand2 className="w-6 h-6 text-white" />
-              </div>
+              </motion.div>
               <div>
                 <h1 className="text-lg font-bold flex items-center gap-2">
                   ШаржМастер
@@ -544,16 +578,17 @@ export default function CaricatureApp() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="px-3 py-1 bg-white/10 rounded-full text-xs">
-                <span className="text-amber-400 font-bold">{stats.xp}</span> XP
-              </div>
-            </div>
+            <motion.div 
+              className="px-3 py-1.5 bg-white/10 rounded-full text-xs font-medium"
+              whileHover={{ scale: 1.05 }}
+            >
+              <span className="text-amber-400 font-bold">{stats.xp}</span> XP
+            </motion.div>
           </div>
           
           {/* XP Progress Bar */}
           <div className="px-4 pb-2">
-            <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
               <motion.div 
                 className="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-pink-500"
                 initial={{ width: 0 }}
@@ -568,9 +603,9 @@ export default function CaricatureApp() {
         <AnimatePresence>
           {showAchievement && (
             <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
+              initial={{ opacity: 0, y: -50, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -50, scale: 0.8 }}
               className="fixed top-20 left-4 right-4 z-50 mx-auto max-w-sm"
             >
               <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-4 shadow-xl flex items-center gap-3">
@@ -607,9 +642,10 @@ export default function CaricatureApp() {
                 <p className="text-white/60 text-sm mb-6 max-w-xs mx-auto">
                   Выберите фото из галереи или сделайте новое для создания шаржа
                 </p>
-                <div className="flex gap-3 justify-center">
+                <div className="flex gap-3 justify-center flex-wrap">
                   <motion.button
                     whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.02 }}
                     onClick={handleCameraCapture}
                     className="flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-pink-600 to-rose-600 rounded-xl font-medium shadow-lg shadow-pink-500/25"
                   >
@@ -618,6 +654,7 @@ export default function CaricatureApp() {
                   </motion.button>
                   <motion.button
                     whileTap={{ scale: 0.95 }}
+                    whileHover={{ scale: 1.02 }}
                     onClick={handleGallerySelect}
                     className="flex items-center gap-2 px-6 py-3.5 bg-white/10 rounded-xl font-medium border border-white/20"
                   >
@@ -643,7 +680,8 @@ export default function CaricatureApp() {
                     className="w-full aspect-square object-cover"
                     style={{ transform: `scale(${zoom})` }}
                   />
-                  <button
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
                     onClick={() => {
                       setSelectedImage(null);
                       setGeneratedImage(null);
@@ -652,19 +690,31 @@ export default function CaricatureApp() {
                     className="absolute top-2 right-2 p-2 bg-black/50 rounded-full backdrop-blur-sm"
                   >
                     <X className="w-5 h-5" />
-                  </button>
+                  </motion.button>
                   
                   {/* Zoom controls */}
                   <div className="absolute bottom-3 right-3 flex gap-2">
-                    <button onClick={() => setZoom(Math.max(1, zoom - 0.2))} className="p-2 bg-black/50 rounded-full backdrop-blur-sm">
+                    <motion.button 
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => setZoom(Math.max(1, zoom - 0.2))} 
+                      className="p-2 bg-black/50 rounded-full backdrop-blur-sm"
+                    >
                       <ZoomOut className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => setZoom(Math.min(2, zoom + 0.2))} className="p-2 bg-black/50 rounded-full backdrop-blur-sm">
+                    </motion.button>
+                    <motion.button 
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => setZoom(Math.min(2, zoom + 0.2))} 
+                      className="p-2 bg-black/50 rounded-full backdrop-blur-sm"
+                    >
                       <ZoomIn className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => setZoom(1)} className="p-2 bg-black/50 rounded-full backdrop-blur-sm">
+                    </motion.button>
+                    <motion.button 
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => setZoom(1)} 
+                      className="p-2 bg-black/50 rounded-full backdrop-blur-sm"
+                    >
                       <RotateCcw className="w-4 h-4" />
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
                 
@@ -676,12 +726,20 @@ export default function CaricatureApp() {
                       Стиль шаржа
                     </h3>
                     <div className="flex gap-1">
-                      <button onClick={() => scrollStyle('left')} className="p-1.5 bg-white/10 rounded-full">
+                      <motion.button 
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => scrollStyle('left')} 
+                        className="p-1.5 bg-white/10 rounded-full"
+                      >
                         <ChevronLeft className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => scrollStyle('right')} className="p-1.5 bg-white/10 rounded-full">
+                      </motion.button>
+                      <motion.button 
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => scrollStyle('right')} 
+                        className="p-1.5 bg-white/10 rounded-full"
+                      >
                         <ChevronRight className="w-4 h-4" />
-                      </button>
+                      </motion.button>
                     </div>
                   </div>
                   
@@ -743,7 +801,8 @@ export default function CaricatureApp() {
                 </div>
 
                 {/* Frame Selection */}
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => setShowFrameModal(true)}
                   className="w-full p-3 bg-white/5 rounded-xl border border-white/10 flex items-center justify-between"
                 >
@@ -754,7 +813,7 @@ export default function CaricatureApp() {
                   <span className="text-white/60 text-sm">
                     {FRAMES.find(f => f.id === selectedFrame)?.name}
                   </span>
-                </button>
+                </motion.button>
                 
                 {/* Generate Button */}
                 <motion.button
@@ -769,10 +828,25 @@ export default function CaricatureApp() {
                   )}
                 >
                   {isGenerating ? (
-                    <>
-                      <Loader2 className="w-6 h-6 animate-spin" />
-                      Создаём магию...
-                    </>
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="flex items-center gap-3">
+                        <Loader2 className="w-6 h-6 animate-spin" />
+                        <span>{GENERATION_STEPS[generationStep]?.text}</span>
+                      </div>
+                      <div className="flex gap-1">
+                        {GENERATION_STEPS.map((_, i) => (
+                          <motion.div
+                            key={i}
+                            className={cn(
+                              "w-2 h-2 rounded-full",
+                              i <= generationStep ? "bg-white" : "bg-white/30"
+                            )}
+                            animate={i === generationStep ? { scale: [1, 1.5, 1] } : {}}
+                            transition={{ duration: 0.5, repeat: Infinity }}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   ) : (
                     <>
                       <Sparkles className="w-6 h-6" />
@@ -781,142 +855,180 @@ export default function CaricatureApp() {
                   )}
                   
                   {/* Shimmer effect */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                    animate={{ x: ['-100%', '100%'] }}
-                    transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-                  />
+                  {!isGenerating && (
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                      animate={{ x: ['-100%', '100%'] }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+                    />
+                  )}
                 </motion.button>
                 
                 {/* Error Message */}
-                {error && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm"
-                  >
-                    {error}
-                  </motion.div>
-                )}
+                <AnimatePresence>
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-red-200 text-sm flex items-start gap-3"
+                    >
+                      <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="font-medium">Ошибка</p>
+                        <p className="text-red-300/80">{error}</p>
+                        <motion.button
+                          whileTap={{ scale: 0.95 }}
+                          onClick={handleGenerate}
+                          className="mt-2 px-3 py-1 bg-red-500/30 rounded-lg text-xs font-medium flex items-center gap-1"
+                        >
+                          <RefreshCw className="w-3 h-3" />
+                          Попробовать снова
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
                 
                 {/* Generated Image */}
-                {generatedImage && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="space-y-4"
-                  >
-                    <div className="relative rounded-2xl overflow-hidden bg-black/30">
-                      <div className="absolute top-2 left-2 px-3 py-1 bg-gradient-to-r from-pink-500 to-violet-500 rounded-full text-xs font-medium flex items-center gap-1">
-                        <Sparkles className="w-3 h-3" /> Готово!
-                      </div>
-                      <img 
-                        src={generatedImage} 
-                        alt="Caricature" 
-                        className="w-full aspect-square object-cover"
-                      />
-                      
-                      {/* Quick actions overlay */}
-                      <div className="absolute bottom-3 left-3 right-3 flex gap-2">
-                        <button
-                          onClick={() => handleLike(history[0]?.id || '')}
-                          className="flex-1 py-2 bg-black/50 rounded-xl backdrop-blur-sm flex items-center justify-center gap-2 text-sm"
-                        >
-                          <Heart className="w-4 h-4 text-pink-400" />
-                          <span>{history[0]?.likes || 0}</span>
-                        </button>
-                      </div>
-                    </div>
-                    
-                    {/* Caption Section */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-semibold flex items-center gap-2">
-                          <MessageSquare className="w-4 h-4 text-blue-400" />
-                          Подпись для поста
-                        </h3>
-                        <button
-                          onClick={() => setShowCaptionModal(true)}
-                          className="text-sm text-pink-400"
-                        >
-                          Изменить
-                        </button>
+                <AnimatePresence>
+                  {generatedImage && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="space-y-4"
+                    >
+                      <div className="relative rounded-2xl overflow-hidden bg-black/30">
+                        <div className="absolute top-2 left-2 px-3 py-1 bg-gradient-to-r from-pink-500 to-violet-500 rounded-full text-xs font-medium flex items-center gap-1 z-10">
+                          <Sparkles className="w-3 h-3" /> Готово!
+                        </div>
+                        <motion.img 
+                          src={generatedImage} 
+                          alt="Caricature" 
+                          className="w-full aspect-square object-cover"
+                          initial={{ scale: 0.9, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ delay: 0.1 }}
+                        />
+                        
+                        {/* Quick actions overlay */}
+                        <div className="absolute bottom-3 left-3 right-3 flex gap-2">
+                          <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleLike(history[0]?.id || '')}
+                            className="flex-1 py-2 bg-black/50 rounded-xl backdrop-blur-sm flex items-center justify-center gap-2 text-sm"
+                          >
+                            <Heart className="w-4 h-4 text-pink-400" />
+                            <span>{history[0]?.likes || 0}</span>
+                          </motion.button>
+                          <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={handleGenerate}
+                            className="py-2 px-4 bg-black/50 rounded-xl backdrop-blur-sm flex items-center gap-2 text-sm"
+                          >
+                            <RefreshCw className="w-4 h-4" />
+                            Ещё
+                          </motion.button>
+                        </div>
                       </div>
                       
-                      <div className="p-3 bg-white/5 rounded-xl border border-white/10">
-                        <p className="text-sm text-white/80">{selectedCaption}</p>
-                      </div>
-                      
-                      <button
-                        onClick={copyCaption}
-                        className="w-full py-2 bg-white/10 rounded-xl text-sm flex items-center justify-center gap-2"
-                      >
-                        {copiedCaption ? (
-                          <>
-                            <Check className="w-4 h-4 text-green-400" />
-                            Скопировано!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-4 h-4" />
-                            Копировать подпись
-                          </>
-                        )}
-                      </button>
-                    </div>
-                    
-                    {/* Social Share Buttons */}
-                    <div className="space-y-2">
-                      <h3 className="font-semibold">Поделиться</h3>
-                      <div className="grid grid-cols-2 gap-3">
+                      {/* Caption Section */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-semibold flex items-center gap-2">
+                            <MessageSquare className="w-4 h-4 text-blue-400" />
+                            Подпись для поста
+                          </h3>
+                          <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setShowCaptionModal(true)}
+                            className="text-sm text-pink-400"
+                          >
+                            Изменить
+                          </motion.button>
+                        </div>
+                        
+                        <div className="p-3 bg-white/5 rounded-xl border border-white/10">
+                          <p className="text-sm text-white/80">{selectedCaption}</p>
+                        </div>
+                        
                         <motion.button
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => shareToVK(generatedImage)}
-                          className="py-3 bg-[#4a76a8] rounded-xl font-medium flex items-center justify-center gap-2 shadow-lg"
+                          whileTap={{ scale: 0.98 }}
+                          onClick={copyCaption}
+                          className="w-full py-2 bg-white/10 rounded-xl text-sm flex items-center justify-center gap-2"
                         >
-                          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4 8.781 4 8.273c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.678.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.254-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.744-.576.744z"/>
-                          </svg>
-                          ВКонтакте
-                        </motion.button>
-                        <motion.button
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => shareToTelegram(generatedImage)}
-                          className="py-3 bg-[#0088cc] rounded-xl font-medium flex items-center justify-center gap-2 shadow-lg"
-                        >
-                          <Send className="w-5 h-5" />
-                          Telegram
+                          {copiedCaption ? (
+                            <>
+                              <Check className="w-4 h-4 text-green-400" />
+                              Скопировано!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-4 h-4" />
+                              Копировать подпись
+                            </>
+                          )}
                         </motion.button>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-3">
-                        <motion.button
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => handleDownload(generatedImage)}
-                          className="py-3 bg-white/10 rounded-xl font-medium flex items-center justify-center gap-2 border border-white/20"
-                        >
-                          <Download className="w-5 h-5" />
-                          Скачать
-                        </motion.button>
-                        <motion.button
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => {
-                            if (navigator.share) {
-                              navigator.share({
-                                title: 'Мой шарж',
-                                text: selectedCaption,
-                              });
-                            }
-                          }}
-                          className="py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl font-medium flex items-center justify-center gap-2"
-                        >
-                          <Share2 className="w-5 h-5" />
-                          Ещё...
-                        </motion.button>
+                      {/* Social Share Buttons */}
+                      <div className="space-y-2">
+                        <h3 className="font-semibold">Поделиться</h3>
+                        <div className="grid grid-cols-2 gap-3">
+                          <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => shareToVK(generatedImage)}
+                            className="py-3 bg-[#4a76a8] rounded-xl font-medium flex items-center justify-center gap-2 shadow-lg"
+                          >
+                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4 8.781 4 8.273c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.678.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.254-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.744-.576.744z"/>
+                            </svg>
+                            ВКонтакте
+                          </motion.button>
+                          <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => shareToTelegram(generatedImage)}
+                            className="py-3 bg-[#0088cc] rounded-xl font-medium flex items-center justify-center gap-2 shadow-lg"
+                          >
+                            <Send className="w-5 h-5" />
+                            Telegram
+                          </motion.button>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-3">
+                          <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleDownload(generatedImage)}
+                            disabled={isDownloading}
+                            className="py-3 bg-white/10 rounded-xl font-medium flex items-center justify-center gap-2 border border-white/20"
+                          >
+                            {isDownloading ? (
+                              <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                              <Download className="w-5 h-5" />
+                            )}
+                            Скачать
+                          </motion.button>
+                          <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => {
+                              if (navigator.share) {
+                                navigator.share({
+                                  title: 'Мой шарж',
+                                  text: selectedCaption,
+                                });
+                              }
+                            }}
+                            className="py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl font-medium flex items-center justify-center gap-2"
+                          >
+                            <Share2 className="w-5 h-5" />
+                            Ещё...
+                          </motion.button>
+                        </div>
                       </div>
-                    </div>
-                  </motion.div>
-                )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             )}
             
@@ -941,9 +1053,13 @@ export default function CaricatureApp() {
             
             {history.length === 0 ? (
               <div className="text-center py-16">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-white/5 flex items-center justify-center">
-                  <History className="w-10 h-10 text-white/30" />
-                </div>
+                <motion.div 
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-white/5 flex items-center justify-center"
+                >
+                  <ImageIcon className="w-10 h-10 text-white/30" />
+                </motion.div>
                 <p className="text-white/60 mb-2">История пуста</p>
                 <p className="text-white/40 text-sm">Созданные шаржи появятся здесь</p>
               </div>
@@ -957,15 +1073,16 @@ export default function CaricatureApp() {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.9 }}
                       transition={{ delay: index * 0.05 }}
-                      className="relative rounded-2xl overflow-hidden bg-black/30 aspect-square group"
+                      className="relative rounded-2xl overflow-hidden bg-black/30 aspect-square group cursor-pointer"
                       onClick={() => setSelectedHistoryItem(item)}
+                      whileTap={{ scale: 0.95 }}
                     >
                       <img 
                         src={item.caricatureImage} 
                         alt="Caricature"
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-active:opacity-100 transition-opacity">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
                           <div className="flex items-center gap-1 text-xs">
                             <Heart className="w-3 h-3 text-pink-400" />
@@ -983,7 +1100,8 @@ export default function CaricatureApp() {
             )}
             
             {history.length > 0 && (
-              <button
+              <motion.button
+                whileTap={{ scale: 0.98 }}
                 onClick={() => {
                   if (confirm('Очистить всю историю?')) {
                     setHistory([]);
@@ -992,7 +1110,7 @@ export default function CaricatureApp() {
                 className="w-full mt-4 py-3 bg-red-500/20 border border-red-500/30 rounded-xl text-red-300 text-sm"
               >
                 Очистить историю
-              </button>
+              </motion.button>
             )}
           </div>
         )}
@@ -1001,12 +1119,19 @@ export default function CaricatureApp() {
         {activeTab === 'profile' && (
           <div className="px-4 py-4 space-y-4">
             {/* User Profile Card */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-pink-600/30 to-violet-600/30 p-6 border border-white/10">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-pink-600/30 to-violet-600/30 p-6 border border-white/10"
+            >
               <div className="absolute top-0 right-0 w-32 h-32 bg-pink-500/20 rounded-full blur-3xl" />
               <div className="relative flex items-center gap-4">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-500 to-violet-600 flex items-center justify-center shadow-xl shadow-purple-500/30">
+                <motion.div 
+                  className="w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-500 to-violet-600 flex items-center justify-center shadow-xl shadow-purple-500/30"
+                  whileHover={{ scale: 1.05, rotate: 5 }}
+                >
                   <Crown className="w-10 h-10 text-white" />
-                </div>
+                </motion.div>
                 <div>
                   <h2 className="text-2xl font-bold">{getLevelName(stats.level)}</h2>
                   <p className="text-white/60">Уровень {stats.level}</p>
@@ -1021,41 +1146,69 @@ export default function CaricatureApp() {
               <div className="mt-4">
                 <div className="flex justify-between text-xs text-white/60 mb-1">
                   <span>Уровень {stats.level}</span>
-                  <span>Уровень {stats.level + 1}</span>
+                  <span>Уровень {Math.min(stats.level + 1, 12)}</span>
                 </div>
                 <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                   <motion.div 
                     className="h-full bg-gradient-to-r from-amber-500 to-orange-500"
-                    style={{ width: `${getXPProgress()}%` }}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${getXPProgress()}%` }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
                   />
                 </div>
               </div>
-            </div>
+            </motion.div>
             
             {/* Stats Grid */}
             <div className="grid grid-cols-3 gap-3">
-              <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center">
-                <div className="text-3xl font-bold text-pink-400">{stats.totalCreated}</div>
-                <div className="text-xs text-white/60 mt-1">Создано</div>
-              </div>
-              <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center">
-                <div className="text-3xl font-bold text-red-400">{stats.totalLikes}</div>
-                <div className="text-xs text-white/60 mt-1">Лайков</div>
-              </div>
-              <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center">
-                <div className="text-3xl font-bold text-blue-400">{stats.totalShares}</div>
-                <div className="text-xs text-white/60 mt-1">Репостов</div>
-              </div>
+              {[
+                { value: stats.totalCreated, label: 'Создано', color: 'pink', icon: Sparkles },
+                { value: stats.totalLikes, label: 'Лайков', color: 'red', icon: Heart },
+                { value: stats.totalShares, label: 'Репостов', color: 'blue', icon: Share2 },
+              ].map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center"
+                >
+                  <stat.icon className={cn(
+                    "w-5 h-5 mx-auto mb-1",
+                    stat.color === 'pink' && "text-pink-400",
+                    stat.color === 'red' && "text-red-400",
+                    stat.color === 'blue' && "text-blue-400"
+                  )} />
+                  <div className={cn(
+                    "text-2xl font-bold",
+                    stat.color === 'pink' && "text-pink-400",
+                    stat.color === 'red' && "text-red-400",
+                    stat.color === 'blue' && "text-blue-400"
+                  )}>{stat.value}</div>
+                  <div className="text-xs text-white/60 mt-1">{stat.label}</div>
+                </motion.div>
+              ))}
             </div>
             
             {/* Streak */}
-            <div className="p-4 bg-gradient-to-r from-orange-500/20 to-amber-500/20 rounded-2xl border border-orange-500/30 flex items-center gap-4">
-              <Flame className="w-10 h-10 text-orange-400" />
-              <div>
-                <div className="font-bold text-lg">{stats.streak} дней подряд</div>
-                <div className="text-sm text-white/60">Серия использования</div>
-              </div>
-            </div>
+            {stats.streak > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-4 bg-gradient-to-r from-orange-500/20 to-amber-500/20 rounded-2xl border border-orange-500/30 flex items-center gap-4"
+              >
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                >
+                  <Flame className="w-10 h-10 text-orange-400" />
+                </motion.div>
+                <div>
+                  <div className="font-bold text-lg">{stats.streak} дней подряд</div>
+                  <div className="text-sm text-white/60">Серия использования</div>
+                </div>
+              </motion.div>
+            )}
             
             {/* Achievements */}
             <div className="space-y-3">
@@ -1093,22 +1246,17 @@ export default function CaricatureApp() {
                 <h3 className="font-semibold">Как получить XP</h3>
               </div>
               <div className="grid grid-cols-2 gap-2 text-sm">
-                <div className="flex items-center gap-2 text-white/70">
-                  <Sparkles className="w-4 h-4 text-pink-400" />
-                  Шарж: +25 XP
-                </div>
-                <div className="flex items-center gap-2 text-white/70">
-                  <Share2 className="w-4 h-4 text-blue-400" />
-                  Репост: +15 XP
-                </div>
-                <div className="flex items-center gap-2 text-white/70">
-                  <Heart className="w-4 h-4 text-red-400" />
-                  Лайк: +5 XP
-                </div>
-                <div className="flex items-center gap-2 text-white/70">
-                  <Trophy className="w-4 h-4 text-amber-400" />
-                  Достижение: +XP
-                </div>
+                {[
+                  { icon: Sparkles, text: 'Шарж: +25 XP', color: 'text-pink-400' },
+                  { icon: Share2, text: 'Репост: +15 XP', color: 'text-blue-400' },
+                  { icon: Heart, text: 'Лайк: +5 XP', color: 'text-red-400' },
+                  { icon: Trophy, text: 'Достижение: +XP', color: 'text-amber-400' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2 text-white/70">
+                    <item.icon className={cn("w-4 h-4", item.color)} />
+                    {item.text}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -1118,47 +1266,31 @@ export default function CaricatureApp() {
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-black/60 backdrop-blur-xl border-t border-white/10 z-50">
         <div className="flex justify-around py-2 pb-safe">
-          <button
-            onClick={() => setActiveTab('create')}
-            className={cn(
-              "flex flex-col items-center py-2 px-6 rounded-xl transition-all",
-              activeTab === 'create' 
-                ? "text-pink-400 bg-pink-500/10" 
-                : "text-white/60"
-            )}
-          >
-            <Wand2 className="w-6 h-6" />
-            <span className="text-xs mt-1 font-medium">Создать</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('history')}
-            className={cn(
-              "flex flex-col items-center py-2 px-6 rounded-xl transition-all relative",
-              activeTab === 'history' 
-                ? "text-pink-400 bg-pink-500/10" 
-                : "text-white/60"
-            )}
-          >
-            <History className="w-6 h-6" />
-            <span className="text-xs mt-1 font-medium">История</span>
-            {history.length > 0 && (
-              <span className="absolute top-1 right-4 w-5 h-5 bg-pink-500 rounded-full text-[10px] flex items-center justify-center">
-                {history.length > 9 ? '9+' : history.length}
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => setActiveTab('profile')}
-            className={cn(
-              "flex flex-col items-center py-2 px-6 rounded-xl transition-all",
-              activeTab === 'profile' 
-                ? "text-pink-400 bg-pink-500/10" 
-                : "text-white/60"
-            )}
-          >
-            <Trophy className="w-6 h-6" />
-            <span className="text-xs mt-1 font-medium">Профиль</span>
-          </button>
+          {[
+            { id: 'create', icon: Wand2, label: 'Создать' },
+            { id: 'history', icon: History, label: 'История', badge: history.length },
+            { id: 'profile', icon: Trophy, label: 'Профиль' },
+          ].map((tab) => (
+            <motion.button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as typeof activeTab)}
+              whileTap={{ scale: 0.9 }}
+              className={cn(
+                "flex flex-col items-center py-2 px-6 rounded-xl transition-all relative",
+                activeTab === tab.id 
+                  ? "text-pink-400 bg-pink-500/10" 
+                  : "text-white/60"
+              )}
+            >
+              <tab.icon className="w-6 h-6" />
+              <span className="text-xs mt-1 font-medium">{tab.label}</span>
+              {tab.badge && tab.badge > 0 && (
+                <span className="absolute top-1 right-4 w-5 h-5 bg-pink-500 rounded-full text-[10px] flex items-center justify-center">
+                  {tab.badge > 9 ? '9+' : tab.badge}
+                </span>
+              )}
+            </motion.button>
+          ))}
         </div>
       </nav>
 
@@ -1193,7 +1325,7 @@ export default function CaricatureApp() {
                 <div className="space-y-3 text-left mb-6">
                   {[
                     { icon: Camera, text: 'Загрузите фото из галереи или камеры', color: 'pink' },
-                    { icon: Palette, text: 'Выберите стиль из 10 вариантов', color: 'violet' },
+                    { icon: Palette, text: 'Выберите стиль из 12 вариантов', color: 'violet' },
                     { icon: MessageSquare, text: 'Добавьте готовую подпись для поста', color: 'blue' },
                     { icon: Share2, text: 'Опубликуйте в ВК или Telegram', color: 'green' },
                   ].map((item, i) => (
@@ -1259,8 +1391,9 @@ export default function CaricatureApp() {
               
               <div className="space-y-2">
                 {CAPTION_TEMPLATES.map((template) => (
-                  <button
+                  <motion.button
                     key={template.id}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => {
                       const styleName = CARICATURE_STYLES.find(s => s.id === selectedStyle)?.nameRu || selectedStyle;
                       setSelectedCaption(template.text.replace('{style}', styleName));
@@ -1269,7 +1402,7 @@ export default function CaricatureApp() {
                     className="w-full p-3 bg-white/5 rounded-xl text-left text-sm hover:bg-white/10 transition-colors border border-white/10"
                   >
                     {template.text.replace('{style}', CARICATURE_STYLES.find(s => s.id === selectedStyle)?.nameRu || '')}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </motion.div>
@@ -1299,8 +1432,9 @@ export default function CaricatureApp() {
               
               <div className="grid grid-cols-3 gap-3">
                 {FRAMES.map((frame) => (
-                  <button
+                  <motion.button
                     key={frame.id}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => {
                       setSelectedFrame(frame.id);
                       setShowFrameModal(false);
@@ -1321,7 +1455,7 @@ export default function CaricatureApp() {
                       }}
                     />
                     <span className="text-xs">{frame.name}</span>
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </motion.div>
@@ -1353,14 +1487,16 @@ export default function CaricatureApp() {
               />
               
               <div className="flex gap-2">
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => handleDownload(selectedHistoryItem.caricatureImage)}
                   className="flex-1 py-3 bg-white/10 rounded-xl flex items-center justify-center gap-2"
                 >
                   <Download className="w-5 h-5" />
                   Скачать
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => {
                     shareToVK(selectedHistoryItem.caricatureImage);
                     setSelectedHistoryItem(null);
@@ -1369,13 +1505,14 @@ export default function CaricatureApp() {
                 >
                   <Share2 className="w-5 h-5" />
                   ВК
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => handleDeleteFromHistory(selectedHistoryItem.id)}
                   className="py-3 px-4 bg-red-500/20 rounded-xl"
                 >
                   <Trash2 className="w-5 h-5 text-red-400" />
-                </button>
+                </motion.button>
               </div>
             </motion.div>
           </motion.div>

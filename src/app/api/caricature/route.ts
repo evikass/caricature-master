@@ -4,7 +4,7 @@ import ZAI from 'z-ai-web-dev-sdk';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { image, style, intensity, addWatermark, addFrame } = body;
+    const { image, style, intensity, addWatermark } = body;
 
     if (!image) {
       return NextResponse.json(
@@ -37,12 +37,49 @@ export async function POST(request: NextRequest) {
       : intensityLevel > 40 
         ? 'moderately exaggerated' 
         : 'subtly exaggerated';
-    
-    const prompt = `Create a ${selectedStyle} from this photo. ${intensityDesc} features. Focus on the most distinctive facial features while keeping the person recognizable. High quality, detailed, vibrant colors, professional caricature art. ${addWatermark ? 'Clean professional look.' : ''} ${addFrame ? 'Leave some background space.' : ''}`;
+
+    // Step 1: Analyze the photo using VLM (Vision Language Model)
+    let photoDescription = '';
+    try {
+      const vlmResponse = await zai.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a professional portrait analyst. Analyze the photo and describe the person\'s key facial features that would be important for creating a caricature. Focus on: face shape, distinctive features (nose, eyes, ears, chin, hair), expression, and any unique characteristics. Be concise but detailed. Respond in English.'
+          },
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'image_url',
+                image_url: {
+                  url: `data:image/jpeg;base64,${image}`
+                }
+              },
+              {
+                type: 'text',
+                text: 'Describe this person\'s facial features for a caricature artist. Focus on distinctive features that should be emphasized.'
+              }
+            ]
+          }
+        ],
+        max_tokens: 300,
+      });
+      
+      photoDescription = vlmResponse.choices[0]?.message?.content || '';
+      console.log('Photo analysis:', photoDescription);
+    } catch (vlmError) {
+      console.warn('VLM analysis failed, continuing without:', vlmError);
+    }
+
+    // Step 2: Generate caricature based on analysis
+    const enhancedPrompt = photoDescription
+      ? `Create a ${selectedStyle} of a person with these features: ${photoDescription}. ${intensityDesc} caricature style. Keep the person recognizable but artistically stylized. High quality, detailed, vibrant colors, professional caricature art. ${addWatermark ? 'Clean professional look suitable for social media.' : ''}`
+      : `Create a ${selectedStyle} from this photo. ${intensityDesc} features. Focus on the most distinctive facial features while keeping the person recognizable. High quality, detailed, vibrant colors, professional caricature art. ${addWatermark ? 'Clean professional look.' : ''}`;
 
     // Generate caricature
     const response = await zai.images.generations.create({
-      prompt: prompt,
+      prompt: enhancedPrompt,
       size: '1024x1024',
     });
 
@@ -58,6 +95,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       image: caricatureBase64,
+      analysis: photoDescription,
     });
 
   } catch (error: any) {
