@@ -142,9 +142,26 @@
         <div class="xp-bar"><div class="xp-fill" id="xpBar" style="width:0%"></div></div>
     </header>
 
-    <div class="notice">
-        <div style="font-size:1.8rem">🎨</div>
-        <div><strong>Генерация шаржей!</strong> Выберите фото, стиль и создайте уникальный шарж с художественными эффектами.</div>
+    <div class="notice" style="background:linear-gradient(135deg,rgba(251,191,36,0.2),rgba(245,158,11,0.2));border-color:rgba(251,191,36,0.4)">
+        <div style="font-size:1.8rem">⚠️</div>
+        <div><strong>Демо-версия!</strong> Это статическая версия с Canvas-эффектами. <a href="#vercel" style="color:#fbbf24;text-decoration:underline">Задеплойте полную AI-версию →</a></div>
+    </div>
+    
+    <div class="section" style="margin:0 16px">
+        <details style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px">
+            <summary style="cursor:pointer;font-weight:600;color:#fbbf24">🚀 Как получить полную AI-генерацию?</summary>
+            <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);line-height:1.6">
+                <p style="margin-bottom:12px">GitHub Pages — статический хостинг и не поддерживает серверный код для AI.</p>
+                <p style="margin-bottom:12px"><strong>Для полной AI-генерации:</strong></p>
+                <ol style="margin-left:20px;margin-bottom:12px">
+                    <li style="margin-bottom:8px">Перейдите на <a href="https://vercel.com" style="color:#60a5fa" target="_blank">vercel.com</a> и войдите через GitHub</li>
+                    <li style="margin-bottom:8px">Нажмите <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px">Import Project</code></li>
+                    <li style="margin-bottom:8px">Выберите репозиторий <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px">evikass/caricature-master</code></li>
+                    <li style="margin-bottom:8px">Нажмите <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px">Deploy</code></li>
+                </ol>
+                <p style="font-size:0.9rem;color:var(--muted)">Vercel бесплатный и поддерживает Next.js с API!</p>
+            </div>
+        </details>
     </div>
 
     <main class="main">
