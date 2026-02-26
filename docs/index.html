@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ШаржМастер PRO - AI Caricature App</title>
+    <meta name="description" content="Создавайте уникальные шаржи с AI и делитесь в соцсетях!">
+    <meta property="og:title" content="ШаржМастер PRO">
+    <meta property="og:description" content="AI приложение для создания шаржей">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ec4899;
+            --secondary: #8b5cf6;
+            --dark: #0f0a1a;
+            --card: rgba(255,255,255,0.05);
+            --text: #ffffff;
+            --text-muted: rgba(255,255,255,0.6);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #1a0a2e 100%);
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 10, 26, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 30px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 180px 0 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(236, 72, 153, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, #ec4899 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 25px rgba(236, 72, 153, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 35px rgba(236, 72, 153, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 30px;
+            padding: 60px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin: 40px 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* Features */
+        .features {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Styles */
+        .styles-section {
+            padding: 80px 0;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .styles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .style-item {
+            background: var(--card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .style-item:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .style-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .style-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Screenshots */
+        .screenshots {
+            padding: 80px 0;
+        }
+
+        .screenshots-container {
+            display: flex;
+            gap: 30px;
+            overflow-x: auto;
+            padding: 20px 0;
+            scroll-snap-type: x mandatory;
+        }
+
+        .screenshot {
+            flex: 0 0 280px;
+            background: linear-gradient(135deg, #2d1b4e, #1a0a2e);
+            border-radius: 30px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            scroll-snap-align: center;
+        }
+
+        .screenshot-inner {
+            background: #000;
+            border-radius: 20px;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .screenshot-label {
+            text-align: center;
+            padding: 15px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Demo Section */
+        .demo-section {
+            padding: 80px 0;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .demo-box {
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--card);
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 25px;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .demo-box h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .demo-box p {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        /* Social */
+        .social-section {
+            padding: 80px 0;
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-btn.vk {
+            background: #4a76a8;
+        }
+
+        .social-btn.telegram {
+            background: #0088cc;
+        }
+
+        .social-btn.github {
+            background: #333;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            padding: 80px 0;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .tech-item {
+            background: var(--card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .tech-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .tech-info h4 {
+            font-size: 1rem;
+        }
+
+        .tech-info p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav {
+                display: flex;
+                gap: 15px;
+            }
+
+            nav a {
+                margin: 0;
+            }
+
+            .hero {
+                padding: 150px 0 60px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <div class="logo-icon">🪄</div>
+                <span>ШаржМастер</span>
+                <span class="badge">PRO</span>
+            </div>
+            <nav>
+                <a href="#features">Функции</a>
+                <a href="#styles">Стили</a>
+                <a href="#demo">Демо</a>
+                <a href="#github">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>Создавайте шаржи с AI</h1>
+            <p>Превращайте обычные фото в уникальные шаржи за секунды. Делитесь с друзьями в ВК и Telegram!</p>
+            <div class="hero-buttons">
+                <a href="https://github.com/evikass/caricature-master" class="btn btn-primary">
+                    <span>📥</span> Скачать с GitHub
+                </a>
+                <a href="#demo" class="btn btn-secondary">
+                    <span>👀</span> Посмотреть демо
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="container">
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">10</div>
+                <div class="stat-label">Стилей шаржей</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Уровней игры</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Достижений</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">∞</div>
+                <div class="stat-label">Возможностей</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Возможности</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>10 уникальных стилей</h3>
+                    <p>От смешного до художественного — выбирайте стиль под настроение</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Мобильный дизайн</h3>
+                    <p>Оптимизирован для телефонов, работает как нативное приложение</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>AI генерация</h3>
+                    <p>Мощный AI создаёт шаржи за секунды с высоким качеством</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📤</div>
+                    <h3>Шаринг в соцсетях</h3>
+                    <p>Публикуйте в ВКонтакте и Telegram одним кликом</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>Готовые подписи</h3>
+                    <p>10 шаблонов подписей для постов с хэштегами</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎮</div>
+                    <h3>Геймификация</h3>
+                    <p>XP, уровни, достижения — играйте и развивайтесь!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Styles -->
+    <section id="styles" class="styles-section">
+        <div class="container">
+            <h2 class="section-title">Стили шаржей</h2>
+            <div class="styles-grid">
+                <div class="style-item">
+                    <div class="style-emoji">😂</div>
+                    <div class="style-name">Смешной</div>
+                </div>
+                <div class="style-item">
+                    <div class="style-emoji">🎨</div>
+                    <div class="style-name">Мультяшный</div>
+                </div>
+                <div class="style-item">
+                    <div class="style-emoji">🖼️</div>
+                    <div class="style-name">Художественный</div>
+                </div>
+                <div class="style-item">
+                    <div class="style-emoji">💥</div>
+                    <div class="style-name">Комикс</div>
+                </div>
+                <div class="style-item">
+                    <div class="style-emoji">✏️</div>
+                    <div class="style-name">Скетч</div>
+                </div>
+                <div class="style-item">
+                    <div class="style-emoji">🌸</div>
+                    <div class="style-name">Аниме</div>
+                </div>
+                <div class="style-item">
+                    <div class="style-emoji">🎭</div>
+                    <div class="style-name">Реалистичный</div>
+                </div>
+                <div class="style-item">
+                    <div class="style-emoji">⭐</div>
+                    <div class="style-name">Звёздный</div>
+                </div>
+                <div class="style-item">
+                    <div class="style-emoji">🧸</div>
+                    <div class="style-name">Чиби</div>
+                </div>
+                <div class="style-item">
+                    <div class="style-emoji">🎭</div>
+                    <div class="style-name">Гротеск</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo -->
+    <section id="demo" class="demo-section">
+        <div class="container">
+            <h2 class="section-title">Попробуйте</h2>
+            <div class="demo-box">
+                <div class="float" style="font-size: 4rem; margin-bottom: 20px;">🪄</div>
+                <h3>Запустите приложение</h3>
+                <p>Склонируйте репозиторий и запустите локально</p>
+                <a href="https://github.com/evikass/caricature-master" class="btn btn-primary">
+                    <span>📂</span> Открыть GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots -->
+    <section class="screenshots">
+        <div class="container">
+            <h2 class="section-title">Скриншоты</h2>
+            <div class="screenshots-container">
+                <div class="screenshot">
+                    <div class="screenshot-inner">📱</div>
+                    <div class="screenshot-label">Главный экран</div>
+                </div>
+                <div class="screenshot">
+                    <div class="screenshot-inner">🎨</div>
+                    <div class="screenshot-label">Выбор стиля</div>
+                </div>
+                <div class="screenshot">
+                    <div class="screenshot-inner">✨</div>
+                    <div class="screenshot-label">Результат</div>
+                </div>
+                <div class="screenshot">
+                    <div class="screenshot-inner">📊</div>
+                    <div class="screenshot-label">Профиль</div>
+                </div>
+                <div class="screenshot">
+                    <div class="screenshot-inner">🏆</div>
+                    <div class="screenshot-label">Достижения</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section class="tech-stack">
+        <div class="container">
+            <h2 class="section-title">Технологии</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <div class="tech-icon">⚛️</div>
+                    <div class="tech-info">
+                        <h4>Next.js 15</h4>
+                        <p>React фреймворк</p>
+                    </div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">📘</div>
+                    <div class="tech-info">
+                        <h4>TypeScript</h4>
+                        <p>Типизация</p>
+                    </div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🎨</div>
+                    <div class="tech-info">
+                        <h4>Tailwind CSS</h4>
+                        <p>Стилизация</p>
+                    </div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🎬</div>
+                    <div class="tech-info">
+                        <h4>Framer Motion</h4>
+                        <p>Анимации</p>
+                    </div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🤖</div>
+                    <div class="tech-info">
+                        <h4>z-ai-web-dev-sdk</h4>
+                        <p>AI генерация</p>
+                    </div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🧩</div>
+                    <div class="tech-info">
+                        <h4>shadcn/ui</h4>
+                        <p>UI компоненты</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social -->
+    <section id="github" class="social-section">
+        <div class="container">
+            <h2 class="section-title">Подключайтесь</h2>
+            <div class="social-buttons">
+                <a href="https://github.com/evikass/caricature-master" class="social-btn github">
+                    <span>📦</span> GitHub
+                </a>
+                <a href="#" class="social-btn vk">
+                    <span>💬</span> ВКонтакте
+                </a>
+                <a href="#" class="social-btn telegram">
+                    <span>✈️</span> Telegram
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>
+                Создано с ❤️ • 
+                <a href="https://github.com/evikass/caricature-master">GitHub</a> • 
+                MIT License
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header scroll effect
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                header.style.background = 'rgba(15, 10, 26, 0.95)';
+            } else {
+                header.style.background = 'rgba(15, 10, 26, 0.8)';
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .style-item, .tech-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.5s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
