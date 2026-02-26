@@ -11,9 +11,15 @@
 
 Создавайте уникальные шаржи и делитесь ими в соцсетях! 🚀
 
-[Демо](#демо) • [Функции](#функции) • [Установка](#установка) • [Использование](#использование)
+[🌐 Website](https://evikass.github.io/caricature-master/) • [Демо](#демо) • [Функции](#функции) • [Установка](#установка)
 
 </div>
+
+---
+
+## 🌐 Live Demo
+
+**Сайт:** [https://evikass.github.io/caricature-master/](https://evikass.github.io/caricature-master/)
 
 ---
 
@@ -74,7 +80,7 @@
 ### Клонирование
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/caricature-master.git
+git clone https://github.com/evikass/caricature-master.git
 cd caricature-master
 ```
 
@@ -115,6 +121,8 @@ npm run dev
 
 ```
 caricature-master/
+├── docs/                     # GitHub Pages сайт
+│   └── index.html
 ├── src/
 │   ├── app/
 │   │   ├── page.tsx          # Главная страница
@@ -208,5 +216,7 @@ MIT License — используйте свободно!
 <div align="center">
   
 **Создано с ❤️ для творчества**
+
+[🌐 Website](https://evikass.github.io/caricature-master/) • [📦 GitHub](https://github.com/evikass/caricature-master)
 
 </div>
