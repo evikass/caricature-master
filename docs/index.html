@@ -700,7 +700,6 @@
     <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none">
 
     <script>
-        // ===== DATA =====
         const STYLES = [
             { id: 'funny', emoji: '😂', name: 'Смешной' },
             { id: 'cartoon', emoji: '🎨', name: 'Мультяшный' },
@@ -715,17 +714,7 @@
             { id: 'pixel', emoji: '👾', name: 'Пиксельный' },
             { id: 'watercolor', emoji: '🎨', name: 'Акварель' },
         ];
-
-        const CAPTIONS = [
-            'Смотрите, какой шарж! 😂 #шарж #карикатура',
-            'AI нарисовал меня! 🤖✨ #AIart',
-            'Немного творчества 🎨 #творчество',
-            'Когда друг сказал, что ты выглядишь так 😂',
-            'Ловите позитив! 🌟 Ставьте лайк! ❤️',
-            'Оцените от 1 до 10 👇',
-            'Репост, если понравилось! 😉🔄',
-        ];
-
+        const CAPTIONS = ['Смотрите, какой шарж! 😂 #шарж', 'AI нарисовал! 🤖✨ #AIart', 'Немного творчества 🎨', 'Оцените от 1 до 10 👇', 'Ловите позитив! 🌟',];
         const ACHIEVEMENTS = [
             { id: 'first', emoji: '🎯', name: 'Первый шаг' },
             { id: 'creative', emoji: '🎨', name: 'Творец' },
@@ -736,108 +725,50 @@
             { id: 'streak3', emoji: '🌊', name: 'На волне' },
             { id: 'streak7', emoji: '🏃', name: 'Марафонец' },
         ];
-
         const LEVELS = ['Новичок', 'Ученик', 'Подмастерье', 'Мастер', 'Эксперт', 'Профессионал', 'Виртуоз', 'Гений', 'Легенда', 'Бог'];
         const LEVEL_XP = [0, 100, 300, 600, 1000, 1500, 2200, 3000, 4000, 5500, 7500, 10000];
 
-        // ===== STATE =====
-        let selectedStyle = 'funny';
-        let intensity = 50;
-        let currentImage = null;
-        let resultImage = null;
-        let likes = 0;
+        let selectedStyle = 'funny', intensity = 50, currentImage = null, resultImage = null, likes = 0;
         let stats = { totalCreated: 0, totalLikes: 0, totalShares: 0, xp: 0, level: 1, achievements: [] };
         let history = [];
 
-        // ===== INIT =====
         function init() {
-            loadState();
-            renderStyles();
-            renderAchievements();
-            updateUI();
+            loadState(); renderStyles(); renderAchievements(); updateUI();
             document.getElementById('fileInput').addEventListener('change', handleFileSelect);
             document.getElementById('cameraInput').addEventListener('change', handleFileSelect);
-            document.getElementById('intensitySlider').addEventListener('input', (e) => {
-                intensity = parseInt(e.target.value);
-                document.getElementById('intensityValue').textContent = intensity;
-            });
-            
+            document.getElementById('intensitySlider').addEventListener('input', (e) => { intensity = parseInt(e.target.value); document.getElementById('intensityValue').textContent = intensity; });
             const uploadArea = document.getElementById('uploadArea');
             uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
             uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('dragover');
-                const file = e.dataTransfer.files[0];
-                if (file && file.type.startsWith('image/')) loadImage(file);
-            });
+            uploadArea.addEventListener('drop', (e) => { e.preventDefault(); uploadArea.classList.remove('dragover'); const file = e.dataTransfer.files[0]; if (file && file.type.startsWith('image/')) loadImage(file); });
         }
 
-        function loadState() {
-            try {
-                const s = localStorage.getItem('cm_stats');
-                if (s) stats = JSON.parse(s);
-                const h = localStorage.getItem('cm_history');
-                if (h) history = JSON.parse(h);
-            } catch(e) {}
-        }
-
-        function saveState() {
-            localStorage.setItem('cm_stats', JSON.stringify(stats));
-            localStorage.setItem('cm_history', JSON.stringify(history));
-        }
+        function loadState() { try { const s = localStorage.getItem('cm_stats'); if (s) stats = JSON.parse(s); const h = localStorage.getItem('cm_history'); if (h) history = JSON.parse(h); } catch(e) {} }
+        function saveState() { localStorage.setItem('cm_stats', JSON.stringify(stats)); localStorage.setItem('cm_history', JSON.stringify(history)); }
 
         function updateUI() {
             const level = stats.level;
             document.getElementById('levelName').textContent = LEVELS[Math.min(level - 1, LEVELS.length - 1)];
             document.getElementById('levelNum').textContent = level;
             document.getElementById('xpCount').textContent = stats.xp;
-            
-            const currentXP = LEVEL_XP[level - 1] || 0;
-            const nextXP = LEVEL_XP[level] || LEVEL_XP[LEVEL_XP.length - 1];
-            const progress = ((stats.xp - currentXP) / (nextXP - currentXP)) * 100;
+            const progress = ((stats.xp - (LEVEL_XP[level - 1] || 0)) / ((LEVEL_XP[level] || 10000) - (LEVEL_XP[level - 1] || 0))) * 100;
             document.getElementById('xpBar').style.width = Math.max(0, Math.min(100, progress)) + '%';
-            
             document.getElementById('profileLevelName').textContent = LEVELS[Math.min(level - 1, LEVELS.length - 1)];
             document.getElementById('profileLevel').textContent = level;
             document.getElementById('profileXP').textContent = stats.xp;
             document.getElementById('profileXPBar').style.width = Math.max(0, Math.min(100, progress)) + '%';
-            
             document.getElementById('statCreated').textContent = stats.totalCreated;
             document.getElementById('statLikes').textContent = stats.totalLikes;
             document.getElementById('statShares').textContent = stats.totalShares;
-            
             document.getElementById('historyCount').textContent = history.length;
             document.getElementById('emptyHistory').classList.toggle('hidden', history.length > 0);
             renderHistory();
         }
 
-        function renderStyles() {
-            document.getElementById('stylesScroll').innerHTML = STYLES.map(s => 
-                `<div class="style-card ${s.id === selectedStyle ? 'active' : ''}" onclick="selectStyle('${s.id}')">
-                    <span class="style-emoji">${s.emoji}</span>
-                    <span class="style-name">${s.name}</span>
-                </div>`
-            ).join('');
-        }
-
-        function renderAchievements() {
-            document.getElementById('achievementsGrid').innerHTML = ACHIEVEMENTS.map(a => 
-                `<div class="achievement ${stats.achievements.includes(a.id) ? 'unlocked' : ''}">
-                    <div class="achievement-icon">${a.emoji}</div>
-                    <div class="achievement-name">${a.name}</div>
-                </div>`
-            ).join('');
-        }
-
-        function renderHistory() {
-            document.getElementById('historyGrid').innerHTML = history.map(item => 
-                `<div class="history-item fade-in"><img src="${item.image}" alt="History"></div>`
-            ).join('');
-        }
-
+        function renderStyles() { document.getElementById('stylesScroll').innerHTML = STYLES.map(s => `<div class="style-card ${s.id === selectedStyle ? 'active' : ''}" onclick="selectStyle('${s.id}')"><span class="style-emoji">${s.emoji}</span><span class="style-name">${s.name}</span></div>`).join(''); }
+        function renderAchievements() { document.getElementById('achievementsGrid').innerHTML = ACHIEVEMENTS.map(a => `<div class="achievement ${stats.achievements.includes(a.id) ? 'unlocked' : ''}"><div class="achievement-icon">${a.emoji}</div><div class="achievement-name">${a.name}</div></div>`).join(''); }
+        function renderHistory() { document.getElementById('historyGrid').innerHTML = history.map(item => `<div class="history-item fade-in"><img src="${item.image}" alt="History"></div>`).join(''); }
         function selectStyle(id) { selectedStyle = id; renderStyles(); }
-
         function handleFileSelect(e) { const file = e.target.files[0]; if (file) loadImage(file); }
 
         function loadImage(file) {
@@ -847,11 +778,9 @@
                 currentImage = new Image();
                 currentImage.onload = () => {
                     const canvas = document.getElementById('previewCanvas');
-                    canvas.width = 512;
-                    canvas.height = 512;
+                    canvas.width = 512; canvas.height = 512;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(currentImage, 0, 0, 512, 512);
-                    
                     document.getElementById('uploadSection').classList.add('hidden');
                     document.getElementById('previewSection').classList.remove('hidden');
                     document.getElementById('styleSection').classList.remove('hidden');
@@ -884,206 +813,98 @@
 
         async function generateCaricature() {
             if (!currentImage) return;
-            
             const btn = document.getElementById('generateBtn');
             const steps = document.getElementById('stepsIndicator');
             const stepText = document.getElementById('stepText');
-            
             btn.disabled = true;
             btn.innerHTML = '<div class="spinner"></div><span>Создаём...</span>';
             steps.classList.remove('hidden');
-            
+
             const stepNames = ['Анализ фото...', 'Выделение черт...', 'Применение стиля...', 'Создание шаржа...'];
-            for (let i = 0; i < 4; i++) {
-                stepText.textContent = stepNames[i];
-                await new Promise(r => setTimeout(r, 400 + Math.random() * 300));
-            }
-            
-            // Apply style effect
+            for (let i = 0; i < 4; i++) { stepText.textContent = stepNames[i]; await new Promise(r => setTimeout(r, 400 + Math.random() * 300)); }
+
             const canvas = document.getElementById('resultCanvas');
-            canvas.width = 512;
-            canvas.height = 512;
+            canvas.width = 512; canvas.height = 512;
             const ctx = canvas.getContext('2d');
-            
-            // Draw original
             ctx.drawImage(currentImage, 0, 0, 512, 512);
-            
-            // Get image data
-            const imageData = ctx.getImageData(0, 0, 512, 512);
-            const data = imageData.data;
-            
+
             const intFactor = intensity / 50;
-            
-            // Apply style-specific effects
             switch(selectedStyle) {
                 case 'funny':
-                    // Wavy distortion + color boost
-                    ctx.drawImage(currentImage, 0, 0, 512, 512);
                     ctx.filter = `saturate(${1.5 * intFactor}) contrast(${1.2 * intFactor}) hue-rotate(10deg)`;
-                    ctx.drawImage(canvas, 0, 0);
-                    ctx.filter = 'none';
-                    break;
-                    
+                    ctx.drawImage(currentImage, 0, 0, 512, 512); ctx.filter = 'none'; break;
                 case 'cartoon':
-                    // Posterize + edge enhance
                     ctx.filter = `saturate(${1.8 * intFactor}) contrast(${1.4 * intFactor})`;
-                    ctx.drawImage(currentImage, 0, 0, 512, 512);
-                    ctx.filter = 'none';
-                    // Add color overlay
-                    ctx.globalCompositeOperation = 'overlay';
-                    ctx.fillStyle = `rgba(100, 200, 255, ${0.2 * intFactor})`;
-                    ctx.fillRect(0, 0, 512, 512);
-                    ctx.globalCompositeOperation = 'source-over';
-                    break;
-                    
+                    ctx.drawImage(currentImage, 0, 0, 512, 512); ctx.filter = 'none';
+                    ctx.globalCompositeOperation = 'overlay'; ctx.fillStyle = `rgba(100, 200, 255, ${0.2 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512); ctx.globalCompositeOperation = 'source-over'; break;
                 case 'artistic':
-                    // Soft artistic blur + warm tones
                     ctx.filter = `saturate(${1.3 * intFactor}) brightness(${1.1 * intFactor})`;
-                    ctx.drawImage(currentImage, 0, 0, 512, 512);
-                    ctx.filter = 'none';
-                    ctx.globalCompositeOperation = 'overlay';
-                    ctx.fillStyle = `rgba(255, 200, 150, ${0.3 * intFactor})`;
-                    ctx.fillRect(0, 0, 512, 512);
-                    ctx.globalCompositeOperation = 'source-over';
-                    break;
-                    
+                    ctx.drawImage(currentImage, 0, 0, 512, 512); ctx.filter = 'none';
+                    ctx.globalCompositeOperation = 'overlay'; ctx.fillStyle = `rgba(255, 200, 150, ${0.3 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512); ctx.globalCompositeOperation = 'source-over'; break;
                 case 'comic':
-                    // High contrast + bold colors
                     ctx.filter = `saturate(${2 * intFactor}) contrast(${1.6 * intFactor})`;
-                    ctx.drawImage(currentImage, 0, 0, 512, 512);
-                    ctx.filter = 'none';
-                    ctx.globalCompositeOperation = 'multiply';
-                    ctx.fillStyle = `rgba(255, 100, 50, ${0.15 * intFactor})`;
-                    ctx.fillRect(0, 0, 512, 512);
-                    ctx.globalCompositeOperation = 'source-over';
-                    break;
-                    
+                    ctx.drawImage(currentImage, 0, 0, 512, 512); ctx.filter = 'none';
+                    ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = `rgba(255, 100, 50, ${0.15 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512); ctx.globalCompositeOperation = 'source-over'; break;
                 case 'sketch':
-                    // Grayscale + contrast (pencil effect)
                     ctx.filter = `grayscale(${0.8 * intFactor}) contrast(${1.5 * intFactor})`;
-                    ctx.drawImage(currentImage, 0, 0, 512, 512);
-                    ctx.filter = 'none';
-                    break;
-                    
+                    ctx.drawImage(currentImage, 0, 0, 512, 512); ctx.filter = 'none'; break;
                 case 'anime':
-                    // Bright colors + smooth
                     ctx.filter = `saturate(${1.6 * intFactor}) brightness(${1.15 * intFactor}) contrast(${1.2 * intFactor})`;
-                    ctx.drawImage(currentImage, 0, 0, 512, 512);
-                    ctx.filter = 'none';
-                    ctx.globalCompositeOperation = 'soft-light';
-                    ctx.fillStyle = `rgba(255, 150, 200, ${0.25 * intFactor})`;
-                    ctx.fillRect(0, 0, 512, 512);
-                    ctx.globalCompositeOperation = 'source-over';
-                    break;
-                    
+                    ctx.drawImage(currentImage, 0, 0, 512, 512); ctx.filter = 'none';
+                    ctx.globalCompositeOperation = 'soft-light'; ctx.fillStyle = `rgba(255, 150, 200, ${0.25 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512); ctx.globalCompositeOperation = 'source-over'; break;
                 case 'realistic':
-                    // Subtle enhancement
                     ctx.filter = `saturate(${1.2 * intFactor}) contrast(${1.1 * intFactor})`;
-                    ctx.drawImage(currentImage, 0, 0, 512, 512);
-                    ctx.filter = 'none';
-                    break;
-                    
+                    ctx.drawImage(currentImage, 0, 0, 512, 512); ctx.filter = 'none'; break;
                 case 'celebrity':
-                    // Glamour + golden tones
                     ctx.filter = `saturate(${1.4 * intFactor}) brightness(${1.1 * intFactor})`;
-                    ctx.drawImage(currentImage, 0, 0, 512, 512);
-                    ctx.filter = 'none';
-                    ctx.globalCompositeOperation = 'overlay';
-                    ctx.fillStyle = `rgba(255, 215, 0, ${0.2 * intFactor})`;
-                    ctx.fillRect(0, 0, 512, 512);
-                    ctx.globalCompositeOperation = 'source-over';
-                    break;
-                    
+                    ctx.drawImage(currentImage, 0, 0, 512, 512); ctx.filter = 'none';
+                    ctx.globalCompositeOperation = 'overlay'; ctx.fillStyle = `rgba(255, 215, 0, ${0.2 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512); ctx.globalCompositeOperation = 'source-over'; break;
                 case 'chibi':
-                    // Cute pastel colors
                     ctx.filter = `saturate(${1.7 * intFactor}) brightness(${1.2 * intFactor})`;
-                    ctx.drawImage(currentImage, 0, 0, 512, 512);
-                    ctx.filter = 'none';
-                    ctx.globalCompositeOperation = 'soft-light';
-                    ctx.fillStyle = `rgba(255, 182, 193, ${0.35 * intFactor})`;
-                    ctx.fillRect(0, 0, 512, 512);
-                    ctx.globalCompositeOperation = 'source-over';
-                    break;
-                    
+                    ctx.drawImage(currentImage, 0, 0, 512, 512); ctx.filter = 'none';
+                    ctx.globalCompositeOperation = 'soft-light'; ctx.fillStyle = `rgba(255, 182, 193, ${0.35 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512); ctx.globalCompositeOperation = 'source-over'; break;
                 case 'grotesque':
-                    // High distortion
                     ctx.filter = `saturate(${1.5 * intFactor}) contrast(${1.8 * intFactor}) hue-rotate(${30 * intFactor}deg)`;
-                    ctx.drawImage(currentImage, 0, 0, 512, 512);
-                    ctx.filter = 'none';
-                    ctx.globalCompositeOperation = 'overlay';
-                    ctx.fillStyle = `rgba(139, 0, 0, ${0.25 * intFactor})`;
-                    ctx.fillRect(0, 0, 512, 512);
-                    ctx.globalCompositeOperation = 'source-over';
-                    break;
-                    
+                    ctx.drawImage(currentImage, 0, 0, 512, 512); ctx.filter = 'none';
+                    ctx.globalCompositeOperation = 'overlay'; ctx.fillStyle = `rgba(139, 0, 0, ${0.25 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512); ctx.globalCompositeOperation = 'source-over'; break;
                 case 'pixel':
-                    // Pixelate effect
                     const pixelSize = Math.max(4, Math.floor(16 - (intensity / 10)));
                     ctx.imageSmoothingEnabled = false;
                     const tempCanvas = document.createElement('canvas');
-                    tempCanvas.width = 512 / pixelSize;
-                    tempCanvas.height = 512 / pixelSize;
+                    tempCanvas.width = 512 / pixelSize; tempCanvas.height = 512 / pixelSize;
                     const tempCtx = tempCanvas.getContext('2d');
                     tempCtx.drawImage(currentImage, 0, 0, tempCanvas.width, tempCanvas.height);
-                    ctx.drawImage(tempCanvas, 0, 0, 512, 512);
-                    ctx.imageSmoothingEnabled = true;
-                    break;
-                    
+                    ctx.drawImage(tempCanvas, 0, 0, 512, 512); ctx.imageSmoothingEnabled = true; break;
                 case 'watercolor':
-                    // Soft watercolor effect
                     ctx.filter = `saturate(${1.4 * intFactor}) brightness(${1.1 * intFactor})`;
                     ctx.drawImage(currentImage, 0, 0, 512, 512);
-                    ctx.filter = 'blur(1px)';
-                    ctx.globalAlpha = 0.3;
-                    ctx.drawImage(currentImage, 0, 0, 512, 512);
-                    ctx.filter = 'none';
-                    ctx.globalAlpha = 1;
-                    ctx.globalCompositeOperation = 'soft-light';
-                    ctx.fillStyle = `rgba(135, 206, 235, ${0.3 * intFactor})`;
-                    ctx.fillRect(0, 0, 512, 512);
-                    ctx.globalCompositeOperation = 'source-over';
-                    break;
+                    ctx.filter = 'blur(1px)'; ctx.globalAlpha = 0.3;
+                    ctx.drawImage(currentImage, 0, 0, 512, 512); ctx.filter = 'none'; ctx.globalAlpha = 1;
+                    ctx.globalCompositeOperation = 'soft-light'; ctx.fillStyle = `rgba(135, 206, 235, ${0.3 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512); ctx.globalCompositeOperation = 'source-over'; break;
             }
-            
+
             resultImage = canvas.toDataURL('image/png');
-            
-            // Show result
             document.getElementById('resultSection').classList.remove('hidden');
             document.getElementById('captionSection').classList.remove('hidden');
             document.getElementById('shareSection').classList.remove('hidden');
-            
-            // Update stats
-            stats.totalCreated++;
-            stats.xp += 25;
-            updateLevel();
-            checkAchievements();
-            
-            // Add to history
+            stats.totalCreated++; stats.xp += 25; updateLevel(); checkAchievements();
             history.unshift({ image: resultImage, style: selectedStyle, date: Date.now() });
             if (history.length > 20) history.pop();
-            
-            saveState();
-            updateUI();
-            
-            // Reset button
-            btn.disabled = false;
-            btn.innerHTML = '<div class="shimmer"></div><span>✨</span><span>Создать шарж</span>';
-            steps.classList.add('hidden');
-            
-            // Set caption
+            saveState(); updateUI();
+            btn.disabled = false; btn.innerHTML = '<div class="shimmer"></div><span>✨</span><span>Создать шарж</span>'; steps.classList.add('hidden');
             const styleName = STYLES.find(s => s.id === selectedStyle)?.name || '';
             document.getElementById('captionText').textContent = `Мой портрет в стиле "${styleName}"! 🎨 ${CAPTIONS[Math.floor(Math.random() * CAPTIONS.length)]}`;
         }
 
-        function updateLevel() {
-            for (let i = LEVEL_XP.length - 1; i >= 0; i--) {
-                if (stats.xp >= LEVEL_XP[i]) {
-                    stats.level = i + 1;
-                    break;
-                }
-            }
-        }
-
+        function updateLevel() { for (let i = LEVEL_XP.length - 1; i >= 0; i--) { if (stats.xp >= LEVEL_XP[i]) { stats.level = i + 1; break; } } }
         function checkAchievements() {
             const newA = [];
             if (stats.totalCreated >= 1 && !stats.achievements.includes('first')) newA.push('first');
@@ -1091,77 +912,17 @@
             if (stats.totalCreated >= 50 && !stats.achievements.includes('master')) newA.push('master');
             if (stats.totalLikes >= 10 && !stats.achievements.includes('popular')) newA.push('popular');
             if (stats.totalShares >= 5 && !stats.achievements.includes('viral')) newA.push('viral');
-            
-            if (newA.length > 0) {
-                stats.achievements.push(...newA);
-                const a = ACHIEVEMENTS.find(x => x.id === newA[0]);
-                if (a) showAchievement(a.name);
-                renderAchievements();
-            }
+            if (newA.length > 0) { stats.achievements.push(...newA); const a = ACHIEVEMENTS.find(x => x.id === newA[0]); if (a) showAchievement(a.name); renderAchievements(); }
         }
 
-        function showAchievement(name) {
-            document.getElementById('achievementName').textContent = name;
-            document.getElementById('achievementPopup').classList.remove('hidden');
-            setTimeout(() => document.getElementById('achievementPopup').classList.add('hidden'), 3000);
-        }
-
-        function likeResult() {
-            likes++;
-            stats.totalLikes++;
-            stats.xp += 5;
-            document.getElementById('heartIcon').textContent = '❤️';
-            document.getElementById('likeCount').textContent = likes;
-            updateLevel();
-            saveState();
-            updateUI();
-        }
-
-        function changeCaption() {
-            document.getElementById('captionText').textContent = CAPTIONS[Math.floor(Math.random() * CAPTIONS.length)];
-        }
-
-        function copyCaption() {
-            navigator.clipboard.writeText(document.getElementById('captionText').textContent).then(() => {
-                const btn = document.getElementById('copyBtn');
-                btn.classList.add('copied');
-                btn.innerHTML = '✅ Скопировано!';
-                setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '📋 Копировать подпись'; }, 2000);
-            });
-        }
-
-        function shareVK() {
-            const text = encodeURIComponent(document.getElementById('captionText').textContent);
-            window.open(`https://vk.com/share.php?comment=${text}`, '_blank', 'width=600,height=400');
-            stats.totalShares++;
-            stats.xp += 15;
-            saveState();
-            updateUI();
-        }
-
-        function shareTelegram() {
-            const text = encodeURIComponent(document.getElementById('captionText').textContent);
-            window.open(`https://t.me/share/url?text=${text}`, '_blank', 'width=600,height=400');
-            stats.totalShares++;
-            stats.xp += 15;
-            saveState();
-            updateUI();
-        }
-
-        function downloadImage() {
-            if (!resultImage) return;
-            const link = document.createElement('a');
-            link.href = resultImage;
-            link.download = `caricature_${Date.now()}.png`;
-            link.click();
-        }
-
-        function shareMore() {
-            if (navigator.share) {
-                navigator.share({ title: 'Мой шарж', text: document.getElementById('captionText').textContent });
-            }
-        }
-
+        function showAchievement(name) { document.getElementById('achievementName').textContent = name; document.getElementById('achievementPopup').classList.remove('hidden'); setTimeout(() => document.getElementById('achievementPopup').classList.add('hidden'), 3000); }
+        function likeResult() { likes++; stats.totalLikes++; stats.xp += 5; document.getElementById('heartIcon').textContent = '❤️'; document.getElementById('likeCount').textContent = likes; updateLevel(); saveState(); updateUI(); }
+        function changeCaption() { document.getElementById('captionText').textContent = CAPTIONS[Math.floor(Math.random() * CAPTIONS.length)]; }
+        function copyCaption() { navigator.clipboard.writeText(document.getElementById('captionText').textContent).then(() => { const btn = document.getElementById('copyBtn'); btn.classList.add('copied'); btn.innerHTML = '✅ Скопировано!'; setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '📋 Копировать подпись'; }, 2000); }); }
+        function shareVK() { const text = encodeURIComponent(document.getElementById('captionText').textContent); window.open(`https://vk.com/share.php?comment=${text}`, '_blank', 'width=600,height=400'); stats.totalShares++; stats.xp += 15; saveState(); updateUI(); }
+        function shareTelegram() { const text = encodeURIComponent(document.getElementById('captionText').textContent); window.open(`https://t.me/share/url?text=${text}`, '_blank', 'width=600,height=400'); stats.totalShares++; stats.xp += 15; saveState(); updateUI(); }
+        function downloadImage() { if (!resultImage) return; const link = document.createElement('a'); link.href = resultImage; link.download = `caricature_${Date.now()}.png`; link.click(); }
+        function shareMore() { if (navigator.share) { navigator.share({ title: 'Мой шарж', text: document.getElementById('captionText').textContent }); } }
         function switchTab(tab) {
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById('nav' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
