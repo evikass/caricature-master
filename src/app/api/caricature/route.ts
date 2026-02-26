@@ -27,6 +27,8 @@ export async function POST(request: NextRequest) {
       celebrity: 'celebrity caricature style, red carpet glamorous, exaggerated features but elegant, magazine cover style, paparazzi photo',
       chibi: 'chibi kawaii style, super deformed cute character, big head tiny body, adorable expression, pastel colors, super cute',
       grotesque: 'grotesque caricature style, highly exaggerated features, artistic distortion, surreal elements, unique character design',
+      pixel: 'pixel art caricature, 16-bit retro video game style, blocky features, nostalgic pixelated aesthetic, vibrant limited color palette, retro gaming character',
+      watercolor: 'watercolor caricature painting, soft wet-on-wet technique, flowing colors, delicate brushstrokes, artistic watercolor portrait, dreamy pastel tones',
     };
 
     const selectedStyle = styleDescriptions[style] || styleDescriptions.funny;
@@ -38,48 +40,14 @@ export async function POST(request: NextRequest) {
         ? 'moderately exaggerated' 
         : 'subtly exaggerated';
 
-    // Step 1: Analyze the photo using VLM (Vision Language Model)
-    let photoDescription = '';
-    try {
-      const vlmResponse = await zai.chat.completions.create({
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a professional portrait analyst. Analyze the photo and describe the person\'s key facial features that would be important for creating a caricature. Focus on: face shape, distinctive features (nose, eyes, ears, chin, hair), expression, and any unique characteristics. Be concise but detailed. Respond in English.'
-          },
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'image_url',
-                image_url: {
-                  url: `data:image/jpeg;base64,${image}`
-                }
-              },
-              {
-                type: 'text',
-                text: 'Describe this person\'s facial features for a caricature artist. Focus on distinctive features that should be emphasized.'
-              }
-            ]
-          }
-        ],
-        max_tokens: 300,
-      });
-      
-      photoDescription = vlmResponse.choices[0]?.message?.content || '';
-      console.log('Photo analysis:', photoDescription);
-    } catch (vlmError) {
-      console.warn('VLM analysis failed, continuing without:', vlmError);
-    }
+    // Generate caricature with detailed prompt
+    const prompt = `Create a ${selectedStyle}. ${intensityDesc} caricature style. Transform this photo into a professional caricature artwork. Keep the person recognizable but artistically stylized. High quality, detailed, vibrant colors, professional caricature art. ${addWatermark ? 'Clean professional look suitable for social media.' : ''}`;
 
-    // Step 2: Generate caricature based on analysis
-    const enhancedPrompt = photoDescription
-      ? `Create a ${selectedStyle} of a person with these features: ${photoDescription}. ${intensityDesc} caricature style. Keep the person recognizable but artistically stylized. High quality, detailed, vibrant colors, professional caricature art. ${addWatermark ? 'Clean professional look suitable for social media.' : ''}`
-      : `Create a ${selectedStyle} from this photo. ${intensityDesc} features. Focus on the most distinctive facial features while keeping the person recognizable. High quality, detailed, vibrant colors, professional caricature art. ${addWatermark ? 'Clean professional look.' : ''}`;
+    console.log('Generating caricature with style:', style, 'intensity:', intensity);
 
     // Generate caricature
     const response = await zai.images.generations.create({
-      prompt: enhancedPrompt,
+      prompt: prompt,
       size: '1024x1024',
     });
 
@@ -92,10 +60,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log('Caricature generated successfully');
+
     return NextResponse.json({
       success: true,
       image: caricatureBase64,
-      analysis: photoDescription,
     });
 
   } catch (error: any) {

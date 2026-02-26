@@ -4,21 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ШаржМастер PRO - AI Шаржи</title>
-    <meta name="description" content="Создавайте уникальные шаржи с помощью AI и делитесь ими в ВКонтакте и Telegram">
+    <meta name="description" content="Создавайте уникальные шаржи с помощью AI">
     <meta name="theme-color" content="#1e1b4b">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         :root {
             --primary: #ec4899;
             --secondary: #8b5cf6;
@@ -26,7 +21,6 @@
             --card-bg: rgba(255,255,255,0.05);
             --text-muted: rgba(255,255,255,0.6);
         }
-        
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
@@ -36,8 +30,6 @@
             line-height: 1.5;
             overflow-x: hidden;
         }
-        
-        /* Header */
         .header {
             position: sticky;
             top: 0;
@@ -47,7 +39,6 @@
             border-bottom: 1px solid rgba(255,255,255,0.1);
             padding: 12px 16px;
         }
-        
         .header-content {
             display: flex;
             justify-content: space-between;
@@ -55,13 +46,7 @@
             max-width: 500px;
             margin: 0 auto;
         }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
+        .logo { display: flex; align-items: center; gap: 12px; }
         .logo-icon {
             width: 44px;
             height: 44px;
@@ -73,12 +58,7 @@
             font-size: 1.5rem;
             box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
         }
-        
-        .logo-text h1 {
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-        
+        .logo-text h1 { font-size: 1.1rem; font-weight: 700; }
         .badge {
             background: linear-gradient(135deg, #f59e0b, #d97706);
             padding: 2px 8px;
@@ -87,7 +67,6 @@
             font-weight: 600;
             margin-left: 6px;
         }
-        
         .level-badge {
             display: flex;
             align-items: center;
@@ -95,18 +74,14 @@
             font-size: 0.75rem;
             color: var(--text-muted);
         }
-        
         .level-badge span { color: #fbbf24; font-weight: 600; }
-        
         .xp-display {
             background: rgba(255,255,255,0.1);
             padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.85rem;
         }
-        
-        .xp-display span { color: #fbbf24; font-weight: 700; }
-        
+        .xp-display span{ color: #fbbf24; font-weight: 700; }
         .xp-bar {
             height: 3px;
             background: rgba(255,255,255,0.1);
@@ -114,25 +89,13 @@
             border-radius: 2px;
             overflow: hidden;
         }
-        
         .xp-fill {
             height: 100%;
             background: linear-gradient(90deg, #fbbf24, #f59e0b);
             transition: width 0.5s;
         }
-        
-        /* Main */
-        .main {
-            padding-bottom: 100px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        
-        /* Upload Section */
-        .upload-section {
-            padding: 20px 16px;
-        }
-        
+        .main { padding-bottom: 100px; max-width: 500px; margin: 0 auto; }
+        .upload-section { padding: 20px 16px; }
         .upload-area {
             border: 2px dashed rgba(255,255,255,0.3);
             border-radius: 24px;
@@ -142,12 +105,10 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
         .upload-area:hover, .upload-area.dragover {
             border-color: var(--primary);
             background: rgba(236, 72, 153, 0.05);
         }
-        
         .upload-icon {
             width: 80px;
             height: 80px;
@@ -160,30 +121,13 @@
             font-size: 2.5rem;
             animation: float 3s ease-in-out infinite;
         }
-        
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
+            0%, 100%{ transform: translateY(0); }
+            50%{ transform: translateY(-8px); }
         }
-        
-        .upload-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        
-        .upload-text {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-        }
-        
-        .upload-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-        
+        .upload-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
+        .upload-text{ color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; }
+        .upload-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
         .btn {
             padding: 14px 24px;
             border-radius: 14px;
@@ -196,60 +140,37 @@
             gap: 8px;
             transition: all 0.2s;
         }
-        
         .btn-primary {
             background: linear-gradient(135deg, #ec4899, #db2777);
             color: white;
             box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
         }
-        
-        .btn-primary:active { transform: scale(0.96); }
-        
+        .btn-primary:active{ transform: scale(0.96); }
         .btn-secondary {
             background: rgba(255,255,255,0.1);
             color: white;
             border: 1px solid rgba(255,255,255,0.2);
         }
-        
-        .btn-large {
-            width: 100%;
-            padding: 18px;
-            font-size: 1.1rem;
-            justify-content: center;
-        }
-        
-        /* Sections */
-        .section {
-            padding: 16px;
-        }
-        
+        .section { padding: 16px; }
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 12px;
         }
-        
-        .section-title {
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-        
-        /* Preview */
+        .section-title{ font-weight: 600; font-size: 0.95rem; }
         .preview-container {
             position: relative;
             border-radius: 20px;
             overflow: hidden;
             background: rgba(0,0,0,0.3);
         }
-        
-        .preview-container img {
+        .preview-container img, .preview-container canvas {
             width: 100%;
             aspect-ratio: 1;
             object-fit: cover;
             display: block;
         }
-        
         .preview-label {
             position: absolute;
             top: 12px;
@@ -261,8 +182,8 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            z-index: 10;
         }
-        
         .preview-close {
             position: absolute;
             top: 12px;
@@ -278,9 +199,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 10;
         }
-        
-        /* Styles Carousel */
         .styles-scroll {
             display: flex;
             gap: 10px;
@@ -288,9 +208,7 @@
             padding-bottom: 8px;
             scrollbar-width: none;
         }
-        
-        .styles-scroll::-webkit-scrollbar { display: none; }
-        
+        .styles-scroll::-webkit-scrollbar{ display: none; }
         .style-card {
             flex-shrink: 0;
             padding: 14px 18px;
@@ -302,34 +220,22 @@
             transition: all 0.2s;
             min-width: 85px;
         }
-        
         .style-card.active {
             border-color: var(--primary);
             background: rgba(236, 72, 153, 0.15);
             box-shadow: 0 4px 20px rgba(236, 72, 153, 0.3);
         }
-        
-        .style-card:active { transform: scale(0.95); }
-        
-        .style-emoji { font-size: 1.8rem; display: block; margin-bottom: 4px; }
-        .style-name { font-size: 0.75rem; font-weight: 500; }
-        
-        /* Slider */
-        .slider-container { margin-bottom: 8px; }
-        
-        .slider-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        
+        .style-card:active{ transform: scale(0.95); }
+        .style-emoji{ font-size: 1.8rem; display: block; margin-bottom: 4px; }
+        .style-name{ font-size: 0.75rem; font-weight: 500; }
+        .slider-container{ margin-bottom: 8px; }
+        .slider-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .slider-value {
             background: rgba(255,255,255,0.1);
             padding: 4px 12px;
             border-radius: 12px;
             font-size: 0.85rem;
         }
-        
         .slider {
             width: 100%;
             height: 8px;
@@ -338,7 +244,6 @@
             outline: none;
             -webkit-appearance: none;
         }
-        
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 28px;
@@ -348,7 +253,6 @@
             cursor: pointer;
             box-shadow: 0 2px 15px rgba(236, 72, 153, 0.5);
         }
-        
         .slider-labels {
             display: flex;
             justify-content: space-between;
@@ -356,8 +260,6 @@
             color: var(--text-muted);
             margin-top: 8px;
         }
-        
-        /* Generate Button */
         .generate-btn {
             width: 100%;
             padding: 20px;
@@ -374,21 +276,17 @@
             position: relative;
             overflow: hidden;
         }
-        
         .generate-btn:not(:disabled) {
             background: linear-gradient(135deg, #ec4899, #8b5cf6);
             color: white;
             box-shadow: 0 6px 35px rgba(236, 72, 153, 0.5);
         }
-        
         .generate-btn:disabled {
             background: rgba(255,255,255,0.1);
             color: var(--text-muted);
             cursor: not-allowed;
         }
-        
-        .generate-btn:not(:disabled):active { transform: scale(0.98); }
-        
+        .generate-btn:not(:disabled):active{ transform: scale(0.98); }
         .shimmer {
             position: absolute;
             top: 0;
@@ -398,9 +296,7 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             animation: shimmer 1.5s infinite;
         }
-        
-        @keyframes shimmer { to { left: 100%; } }
-        
+        @keyframes shimmer{ to{ left: 100%; } }
         .spinner {
             width: 24px;
             height: 24px;
@@ -409,43 +305,26 @@
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-        
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
+        @keyframes spin{ to{ transform: rotate(360deg); } }
         .steps-indicator {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             margin-top: 12px;
             justify-content: center;
+            align-items: center;
         }
-        
-        .step-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.3);
-            transition: all 0.3s;
-        }
-        
-        .step-dot.active {
-            background: white;
-            transform: scale(1.3);
-        }
-        
-        /* Result */
+        .step-text{ font-size: 0.9rem; color: var(--text-muted); }
         .result-container {
             border-radius: 20px;
             overflow: hidden;
             background: rgba(0,0,0,0.3);
             position: relative;
         }
-        
-        .result-container img {
+        .result-container img, .result-container canvas {
             width: 100%;
             aspect-ratio: 1;
             object-fit: cover;
         }
-        
         .result-badge {
             position: absolute;
             top: 12px;
@@ -458,8 +337,8 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            z-index: 10;
         }
-        
         .result-actions {
             position: absolute;
             bottom: 12px;
@@ -467,8 +346,8 @@
             right: 12px;
             display: flex;
             gap: 10px;
+            z-index: 10;
         }
-        
         .result-action-btn {
             flex: 1;
             background: rgba(0,0,0,0.7);
@@ -484,8 +363,6 @@
             justify-content: center;
             gap: 6px;
         }
-        
-        /* Caption */
         .caption-box {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
@@ -494,7 +371,6 @@
             font-size: 0.9rem;
             margin-bottom: 10px;
         }
-        
         .copy-btn {
             width: 100%;
             padding: 12px;
@@ -510,20 +386,12 @@
             gap: 8px;
             transition: all 0.2s;
         }
-        
         .copy-btn.copied {
             background: rgba(34, 197, 94, 0.2);
             border-color: rgba(34, 197, 94, 0.3);
             color: #4ade80;
         }
-        
-        /* Share */
-        .share-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        
+        .share-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .share-btn {
             padding: 14px;
             border-radius: 14px;
@@ -538,14 +406,11 @@
             color: white;
             transition: all 0.2s;
         }
-        
-        .share-btn:active { transform: scale(0.96); }
-        .share-btn.vk { background: #4a76a8; }
-        .share-btn.telegram { background: #0088cc; }
-        .share-btn.download { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
-        .share-btn.more { background: linear-gradient(135deg, #22c55e, #16a34a); }
-        
-        /* Navigation */
+        .share-btn:active{ transform: scale(0.96); }
+        .share-btn.vk{ background: #4a76a8; }
+        .share-btn.telegram{ background: #0088cc; }
+        .share-btn.download{ background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
+        .share-btn.more{ background: linear-gradient(135deg, #22c55e, #16a34a); }
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -558,14 +423,12 @@
             padding-bottom: max(8px, env(safe-area-inset-bottom));
             z-index: 100;
         }
-        
         .nav-content {
             display: flex;
             justify-content: space-around;
             max-width: 500px;
             margin: 0 auto;
         }
-        
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -580,26 +443,14 @@
             border-radius: 14px;
             transition: all 0.2s;
         }
-        
-        .nav-item.active {
-            color: var(--primary);
-            background: rgba(236, 72, 153, 0.1);
-        }
-        
-        .nav-icon { font-size: 1.5rem; }
-        
-        /* Hidden */
-        .hidden { display: none !important; }
-        
-        /* Animations */
+        .nav-item.active{ color: var(--primary); background: rgba(236, 72, 153, 0.1); }
+        .nav-icon{ font-size: 1.5rem; }
+        .hidden{ display: none !important; }
+        .fade-in{ animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from{ opacity: 0; transform: translateY(10px); }
+            to{ opacity: 1; transform: translateY(0); }
         }
-        
-        .fade-in { animation: fadeIn 0.3s ease-out; }
-        
-        /* Achievement popup */
         .achievement-popup {
             position: fixed;
             top: 80px;
@@ -615,23 +466,14 @@
             box-shadow: 0 10px 40px rgba(251, 191, 36, 0.5);
             animation: slideDown 0.3s ease-out;
         }
-        
         @keyframes slideDown {
-            from { opacity: 0; transform: translate(-50%, -20px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
+            from{ opacity: 0; transform: translate(-50%, -20px); }
+            to{ opacity: 1; transform: translate(-50%, 0); }
         }
-        
-        .achievement-icon { font-size: 2rem; }
-        .achievement-text div:first-child { font-weight: 700; }
-        .achievement-text div:last-child { font-size: 0.85rem; opacity: 0.9; }
-        
-        /* History & Profile */
-        .history-grid, .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        
+        .achievement-icon{ font-size: 2rem; }
+        .achievement-text div:first-child{ font-weight: 700; }
+        .achievement-text div:last-child{ font-size: 0.85rem; opacity: 0.9; }
+        .history-grid{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .history-item {
             position: relative;
             aspect-ratio: 1;
@@ -639,13 +481,8 @@
             overflow: hidden;
             cursor: pointer;
         }
-        
-        .history-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
+        .history-item img{ width: 100%; height: 100%; object-fit: cover; }
+        .stats-grid{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         .stat-card {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
@@ -653,13 +490,11 @@
             padding: 20px;
             text-align: center;
         }
-        
-        .stat-value { font-size: 1.8rem; font-weight: 700; }
-        .stat-value.pink { color: var(--primary); }
-        .stat-value.red { color: #f87171; }
-        .stat-value.blue { color: #60a5fa; }
-        .stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
-        
+        .stat-value{ font-size: 1.8rem; font-weight: 700; }
+        .stat-value.pink{ color: var(--primary); }
+        .stat-value.red{ color: #f87171; }
+        .stat-value.blue{ color: #60a5fa; }
+        .stat-label{ font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
         .profile-card {
             background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2));
             border: 1px solid rgba(255,255,255,0.1);
@@ -667,13 +502,7 @@
             padding: 24px;
             margin-bottom: 16px;
         }
-        
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        
+        .profile-header{ display: flex; align-items: center; gap: 16px; }
         .profile-avatar {
             width: 70px;
             height: 70px;
@@ -684,17 +513,10 @@
             justify-content: center;
             font-size: 2rem;
         }
-        
-        .profile-info h2 { font-size: 1.3rem; }
-        .profile-level { color: var(--text-muted); font-size: 0.85rem; }
-        .profile-xp { color: #fbbf24; font-weight: 600; margin-top: 4px; }
-        
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-        
+        .profile-info h2{ font-size: 1.3rem; }
+        .profile-level{ color: var(--text-muted); font-size: 0.85rem; }
+        .profile-xp{ color: #fbbf24; font-weight: 600; margin-top: 4px; }
+        .achievements-grid{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
         .achievement {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
@@ -703,20 +525,16 @@
             text-align: center;
             opacity: 0.4;
         }
-        
         .achievement.unlocked {
             opacity: 1;
             background: rgba(251, 191, 36, 0.1);
             border-color: rgba(251, 191, 36, 0.3);
         }
-        
-        .achievement-icon { font-size: 1.4rem; }
-        .achievement-name { font-size: 0.6rem; margin-top: 4px; }
-        
-        /* Demo notice */
+        .achievement .achievement-icon{ font-size: 1.4rem; }
+        .achievement .achievement-name{ font-size: 0.6rem; margin-top: 4px; }
         .demo-notice {
-            background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2));
-            border: 1px solid rgba(236, 72, 153, 0.3);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.2));
+            border: 1px solid rgba(34, 197, 94, 0.3);
             border-radius: 14px;
             padding: 12px 16px;
             margin: 16px;
@@ -725,82 +543,55 @@
             align-items: center;
             gap: 10px;
         }
-        
-        .demo-notice-icon { font-size: 1.5rem; }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="header-content">
             <div class="logo">
                 <div class="logo-icon">🪄</div>
                 <div>
-                    <div class="logo-text">
-                        <h1>ШаржМастер<span class="badge">PRO</span></h1>
-                    </div>
-                    <div class="level-badge">
-                        👑 <span id="levelName">Новичок</span> • Ур. <span id="levelNum">1</span>
-                    </div>
+                    <div class="logo-text"><h1>ШаржМастер<span class="badge">PRO</span></h1></div>
+                    <div class="level-badge">👑 <span id="levelName">Новичок</span> • Ур. <span id="levelNum">1</span></div>
                 </div>
             </div>
-            <div class="xp-display">
-                <span id="xpCount">0</span> XP
-            </div>
+            <div class="xp-display"><span id="xpCount">0</span> XP</div>
         </div>
-        <div class="xp-bar">
-            <div class="xp-fill" id="xpBar" style="width: 0%"></div>
-        </div>
+        <div class="xp-bar"><div class="xp-fill" id="xpBar" style="width: 0%"></div></div>
     </header>
 
-    <!-- Demo Notice -->
     <div class="demo-notice" id="demoNotice">
-        <div class="demo-notice-icon">ℹ️</div>
-        <div>
-            <strong>Демо-версия</strong><br>
-            Генерация работает в демо-режиме. Для полной версии запустите локально.
-        </div>
+        <div style="font-size:1.5rem">✨</div>
+        <div><strong>Демо-режим</strong> — эффекты применяются к фото. Для AI-генерации запустите локально.</div>
     </div>
 
-    <!-- Main Content -->
     <main class="main">
-        <!-- Create Tab -->
         <div id="createTab">
-            <!-- Upload Section -->
             <div class="upload-section" id="uploadSection">
                 <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
                     <div class="upload-icon">📷</div>
                     <div class="upload-title">Загрузите фото</div>
-                    <div class="upload-text">Выберите или перетащите фото для создания шаржа</div>
+                    <div class="upload-text">Выберите или перетащите фото</div>
                     <div class="upload-buttons">
-                        <button class="btn btn-primary" onclick="event.stopPropagation(); openCamera()">
-                            📸 Камера
-                        </button>
-                        <button class="btn btn-secondary" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">
-                            🖼️ Галерея
-                        </button>
+                        <button class="btn btn-primary" onclick="event.stopPropagation(); openCamera()">📸 Камера</button>
+                        <button class="btn btn-secondary" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">🖼️ Галерея</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Preview Section -->
             <div class="section hidden" id="previewSection">
                 <div class="preview-container">
                     <div class="preview-label">👤 Оригинал</div>
-                    <img id="previewImage" src="" alt="Preview">
+                    <canvas id="previewCanvas"></canvas>
                     <button class="preview-close" onclick="resetApp()">✕</button>
                 </div>
             </div>
 
-            <!-- Style Selection -->
             <div class="section hidden" id="styleSection">
-                <div class="section-header">
-                    <div class="section-title">🎨 Стиль шаржа</div>
-                </div>
+                <div class="section-header"><div class="section-title">🎨 Стиль шаржа</div></div>
                 <div class="styles-scroll" id="stylesScroll"></div>
             </div>
 
-            <!-- Intensity -->
             <div class="section hidden" id="intensitySection">
                 <div class="slider-container">
                     <div class="slider-header">
@@ -808,58 +599,41 @@
                         <div class="slider-value"><span id="intensityValue">50</span>%</div>
                     </div>
                     <input type="range" class="slider" id="intensitySlider" min="10" max="100" value="50">
-                    <div class="slider-labels">
-                        <span>Нежный</span>
-                        <span>Яркий</span>
-                        <span>Экстремальный</span>
-                    </div>
+                    <div class="slider-labels"><span>Нежный</span><span>Яркий</span><span>Экстремальный</span></div>
                 </div>
             </div>
 
-            <!-- Generate Button -->
             <div class="section hidden" id="generateSection">
                 <button class="generate-btn" id="generateBtn" onclick="generateCaricature()">
                     <div class="shimmer"></div>
-                    <span>✨</span>
-                    <span>Создать шарж</span>
+                    <span>✨</span><span>Создать шарж</span>
                 </button>
                 <div class="steps-indicator hidden" id="stepsIndicator">
-                    <div class="step-dot"></div>
-                    <div class="step-dot"></div>
-                    <div class="step-dot"></div>
-                    <div class="step-dot"></div>
+                    <div class="spinner"></div>
+                    <span class="step-text" id="stepText">Анализ фото...</span>
                 </div>
             </div>
 
-            <!-- Result Section -->
             <div class="section hidden" id="resultSection">
                 <div class="result-container">
                     <div class="result-badge">✨ Готово!</div>
-                    <img id="resultImage" src="" alt="Result">
+                    <canvas id="resultCanvas"></canvas>
                     <div class="result-actions">
-                        <button class="result-action-btn" onclick="likeResult()">
-                            <span id="heartIcon">🤍</span> <span id="likeCount">0</span>
-                        </button>
-                        <button class="result-action-btn" onclick="generateCaricature()">
-                            🔄 Ещё
-                        </button>
+                        <button class="result-action-btn" onclick="likeResult()"><span id="heartIcon">🤍</span> <span id="likeCount">0</span></button>
+                        <button class="result-action-btn" onclick="generateCaricature()">🔄 Ещё</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Caption Section -->
             <div class="section hidden" id="captionSection">
                 <div class="section-header">
                     <div class="section-title">📝 Подпись для поста</div>
                     <button style="background:none;border:none;color:var(--primary);font-size:0.85rem;cursor:pointer" onclick="changeCaption()">Изменить</button>
                 </div>
-                <div class="caption-box" id="captionText">Смотрите, какой шарж! 😂 #шарж #карикатура</div>
-                <button class="copy-btn" id="copyBtn" onclick="copyCaption()">
-                    📋 Копировать подпись
-                </button>
+                <div class="caption-box" id="captionText">Смотрите, какой шарж! 😂 #шарж</div>
+                <button class="copy-btn" id="copyBtn" onclick="copyCaption()">📋 Копировать подпись</button>
             </div>
 
-            <!-- Share Buttons -->
             <div class="section hidden" id="shareSection">
                 <div class="section-title" style="margin-bottom:12px">📤 Поделиться</div>
                 <div class="share-grid">
@@ -871,7 +645,6 @@
             </div>
         </div>
 
-        <!-- History Tab -->
         <div id="historyTab" class="hidden">
             <div class="section">
                 <div class="section-header">
@@ -882,12 +655,10 @@
                 <div id="emptyHistory" style="text-align:center;padding:60px 20px;color:var(--text-muted)">
                     <div style="font-size:3rem;margin-bottom:16px">📭</div>
                     <div>История пуста</div>
-                    <div style="font-size:0.85rem">Созданные шаржи появятся здесь</div>
                 </div>
             </div>
         </div>
 
-        <!-- Profile Tab -->
         <div id="profileTab" class="hidden">
             <div class="section">
                 <div class="profile-card">
@@ -899,60 +670,32 @@
                             <div class="profile-xp">⚡ <span id="profileXP">0</span> XP</div>
                         </div>
                     </div>
-                    <div class="xp-bar" style="margin-top:16px">
-                        <div class="xp-fill" id="profileXPBar" style="width:0%"></div>
-                    </div>
+                    <div class="xp-bar" style="margin-top:16px"><div class="xp-fill" id="profileXPBar" style="width:0%"></div></div>
                 </div>
-                
-                <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
-                    <div class="stat-card">
-                        <div class="stat-value pink" id="statCreated">0</div>
-                        <div class="stat-label">Создано</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value red" id="statLikes">0</div>
-                        <div class="stat-label">Лайков</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value blue" id="statShares">0</div>
-                        <div class="stat-label">Репостов</div>
-                    </div>
+                <div class="stats-grid" style="margin-bottom:16px">
+                    <div class="stat-card"><div class="stat-value pink" id="statCreated">0</div><div class="stat-label">Создано</div></div>
+                    <div class="stat-card"><div class="stat-value red" id="statLikes">0</div><div class="stat-label">Лайков</div></div>
+                    <div class="stat-card"><div class="stat-value blue" id="statShares">0</div><div class="stat-label">Репостов</div></div>
                 </div>
-                
                 <div class="section-title" style="margin-bottom:12px">🏆 Достижения</div>
                 <div class="achievements-grid" id="achievementsGrid"></div>
             </div>
         </div>
     </main>
 
-    <!-- Bottom Navigation -->
     <nav class="bottom-nav">
         <div class="nav-content">
-            <button class="nav-item active" id="navCreate" onclick="switchTab('create')">
-                <span class="nav-icon">🪄</span>
-                <span>Создать</span>
-            </button>
-            <button class="nav-item" id="navHistory" onclick="switchTab('history')">
-                <span class="nav-icon">📜</span>
-                <span>История</span>
-            </button>
-            <button class="nav-item" id="navProfile" onclick="switchTab('profile')">
-                <span class="nav-icon">🏆</span>
-                <span>Профиль</span>
-            </button>
+            <button class="nav-item active" id="navCreate" onclick="switchTab('create')"><span class="nav-icon">🪄</span><span>Создать</span></button>
+            <button class="nav-item" id="navHistory" onclick="switchTab('history')"><span class="nav-icon">📜</span><span>История</span></button>
+            <button class="nav-item" id="navProfile" onclick="switchTab('profile')"><span class="nav-icon">🏆</span><span>Профиль</span></button>
         </div>
     </nav>
 
-    <!-- Achievement Popup -->
     <div class="achievement-popup hidden" id="achievementPopup">
         <div class="achievement-icon">🏆</div>
-        <div class="achievement-text">
-            <div>Достижение!</div>
-            <div id="achievementName">Первый шаг</div>
-        </div>
+        <div class="achievement-text"><div>Достижение!</div><div id="achievementName"></div></div>
     </div>
 
-    <!-- Hidden inputs -->
     <input type="file" id="fileInput" accept="image/*" style="display:none">
     <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none">
 
@@ -961,11 +704,11 @@
         const STYLES = [
             { id: 'funny', emoji: '😂', name: 'Смешной' },
             { id: 'cartoon', emoji: '🎨', name: 'Мультяшный' },
-            { id: 'artistic', emoji: '🖼️', name: 'Художественный' },
+            { id: 'artistic', emoji: '🖼️', name: 'Художеств.' },
             { id: 'comic', emoji: '💥', name: 'Комикс' },
             { id: 'sketch', emoji: '✏️', name: 'Скетч' },
             { id: 'anime', emoji: '🌸', name: 'Аниме' },
-            { id: 'realistic', emoji: '🎭', name: 'Реалистичный' },
+            { id: 'realistic', emoji: '🎭', name: 'Реалист.' },
             { id: 'celebrity', emoji: '⭐', name: 'Звёздный' },
             { id: 'chibi', emoji: '🧸', name: 'Чиби' },
             { id: 'grotesque', emoji: '👹', name: 'Гротеск' },
@@ -974,14 +717,13 @@
         ];
 
         const CAPTIONS = [
-            'Смотрите, какой шарж! 😂 Теги: #шарж #карикатура #юмор',
-            'AI нарисовал меня! 🤖✨ Как вам результат? #AIart #шарж',
-            'Немного творчества на сегодня 🎨 #творчество #портрет',
-            'Когда просишь нарисовать тебя смешным 😅 #юмор #прикол',
-            'Ловите позитив! 🌟 Ставьте лайк если понравилось! ❤️',
-            'Оцените от 1 до 10 👇 #опрос #мнение',
-            'Репост, если узнали себя! 😉🔄',
-            'День хорошо начался! ☀️ #позитив #утро',
+            'Смотрите, какой шарж! 😂 #шарж #карикатура',
+            'AI нарисовал меня! 🤖✨ #AIart',
+            'Немного творчества 🎨 #творчество',
+            'Когда друг сказал, что ты выглядишь так 😂',
+            'Ловите позитив! 🌟 Ставьте лайк! ❤️',
+            'Оцените от 1 до 10 👇',
+            'Репост, если понравилось! 😉🔄',
         ];
 
         const ACHIEVEMENTS = [
@@ -1004,16 +746,7 @@
         let currentImage = null;
         let resultImage = null;
         let likes = 0;
-        
-        let stats = {
-            totalCreated: 0,
-            totalLikes: 0,
-            totalShares: 0,
-            xp: 0,
-            level: 1,
-            achievements: []
-        };
-        
+        let stats = { totalCreated: 0, totalLikes: 0, totalShares: 0, xp: 0, level: 1, achievements: [] };
         let history = [];
 
         // ===== INIT =====
@@ -1022,156 +755,121 @@
             renderStyles();
             renderAchievements();
             updateUI();
-            
-            // File input handlers
             document.getElementById('fileInput').addEventListener('change', handleFileSelect);
             document.getElementById('cameraInput').addEventListener('change', handleFileSelect);
-            
-            // Slider
             document.getElementById('intensitySlider').addEventListener('input', (e) => {
                 intensity = parseInt(e.target.value);
                 document.getElementById('intensityValue').textContent = intensity;
             });
             
-            // Drag & drop
             const uploadArea = document.getElementById('uploadArea');
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('dragover');
-            });
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.classList.remove('dragover');
-            });
+            uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
             uploadArea.addEventListener('drop', (e) => {
                 e.preventDefault();
                 uploadArea.classList.remove('dragover');
                 const file = e.dataTransfer.files[0];
-                if (file && file.type.startsWith('image/')) {
-                    loadImage(file);
-                }
+                if (file && file.type.startsWith('image/')) loadImage(file);
             });
         }
 
-        // ===== STATE MANAGEMENT =====
         function loadState() {
             try {
-                const savedStats = localStorage.getItem('caricature_stats_v3');
-                if (savedStats) stats = JSON.parse(savedStats);
-                
-                const savedHistory = localStorage.getItem('caricature_history_v3');
-                if (savedHistory) history = JSON.parse(savedHistory);
+                const s = localStorage.getItem('cm_stats');
+                if (s) stats = JSON.parse(s);
+                const h = localStorage.getItem('cm_history');
+                if (h) history = JSON.parse(h);
             } catch(e) {}
         }
 
         function saveState() {
-            localStorage.setItem('caricature_stats_v3', JSON.stringify(stats));
-            localStorage.setItem('caricature_history_v3', JSON.stringify(history));
+            localStorage.setItem('cm_stats', JSON.stringify(stats));
+            localStorage.setItem('cm_history', JSON.stringify(history));
         }
 
         function updateUI() {
-            // Level
             const level = stats.level;
             document.getElementById('levelName').textContent = LEVELS[Math.min(level - 1, LEVELS.length - 1)];
             document.getElementById('levelNum').textContent = level;
             document.getElementById('xpCount').textContent = stats.xp;
             
-            // XP bar
             const currentXP = LEVEL_XP[level - 1] || 0;
             const nextXP = LEVEL_XP[level] || LEVEL_XP[LEVEL_XP.length - 1];
             const progress = ((stats.xp - currentXP) / (nextXP - currentXP)) * 100;
             document.getElementById('xpBar').style.width = Math.max(0, Math.min(100, progress)) + '%';
             
-            // Profile
             document.getElementById('profileLevelName').textContent = LEVELS[Math.min(level - 1, LEVELS.length - 1)];
             document.getElementById('profileLevel').textContent = level;
             document.getElementById('profileXP').textContent = stats.xp;
             document.getElementById('profileXPBar').style.width = Math.max(0, Math.min(100, progress)) + '%';
             
-            // Stats
             document.getElementById('statCreated').textContent = stats.totalCreated;
             document.getElementById('statLikes').textContent = stats.totalLikes;
             document.getElementById('statShares').textContent = stats.totalShares;
             
-            // History
             document.getElementById('historyCount').textContent = history.length;
             document.getElementById('emptyHistory').classList.toggle('hidden', history.length > 0);
             renderHistory();
         }
 
-        // ===== RENDER =====
         function renderStyles() {
-            const container = document.getElementById('stylesScroll');
-            container.innerHTML = STYLES.map(s => `
-                <div class="style-card ${s.id === selectedStyle ? 'active' : ''}" onclick="selectStyle('${s.id}')">
+            document.getElementById('stylesScroll').innerHTML = STYLES.map(s => 
+                `<div class="style-card ${s.id === selectedStyle ? 'active' : ''}" onclick="selectStyle('${s.id}')">
                     <span class="style-emoji">${s.emoji}</span>
                     <span class="style-name">${s.name}</span>
-                </div>
-            `).join('');
+                </div>`
+            ).join('');
         }
 
         function renderAchievements() {
-            const container = document.getElementById('achievementsGrid');
-            container.innerHTML = ACHIEVEMENTS.map(a => `
-                <div class="achievement ${stats.achievements.includes(a.id) ? 'unlocked' : ''}">
+            document.getElementById('achievementsGrid').innerHTML = ACHIEVEMENTS.map(a => 
+                `<div class="achievement ${stats.achievements.includes(a.id) ? 'unlocked' : ''}">
                     <div class="achievement-icon">${a.emoji}</div>
                     <div class="achievement-name">${a.name}</div>
-                </div>
-            `).join('');
+                </div>`
+            ).join('');
         }
 
         function renderHistory() {
-            const container = document.getElementById('historyGrid');
-            container.innerHTML = history.map(item => `
-                <div class="history-item fade-in">
-                    <img src="${item.image}" alt="History">
-                </div>
-            `).join('');
+            document.getElementById('historyGrid').innerHTML = history.map(item => 
+                `<div class="history-item fade-in"><img src="${item.image}" alt="History"></div>`
+            ).join('');
         }
 
-        // ===== ACTIONS =====
-        function selectStyle(id) {
-            selectedStyle = id;
-            renderStyles();
-        }
+        function selectStyle(id) { selectedStyle = id; renderStyles(); }
 
-        function handleFileSelect(e) {
-            const file = e.target.files[0];
-            if (file) loadImage(file);
-        }
+        function handleFileSelect(e) { const file = e.target.files[0]; if (file) loadImage(file); }
 
         function loadImage(file) {
-            if (file.size > 10 * 1024 * 1024) {
-                alert('Файл слишком большой. Максимум 10 МБ.');
-                return;
-            }
-            
+            if (file.size > 10 * 1024 * 1024) { alert('Файл слишком большой. Максимум 10 МБ.'); return; }
             const reader = new FileReader();
             reader.onload = (e) => {
-                currentImage = e.target.result;
-                document.getElementById('previewImage').src = currentImage;
-                
-                // Show sections
-                document.getElementById('uploadSection').classList.add('hidden');
-                document.getElementById('previewSection').classList.remove('hidden');
-                document.getElementById('styleSection').classList.remove('hidden');
-                document.getElementById('intensitySection').classList.remove('hidden');
-                document.getElementById('generateSection').classList.remove('hidden');
-                document.getElementById('resultSection').classList.add('hidden');
-                document.getElementById('captionSection').classList.add('hidden');
-                document.getElementById('shareSection').classList.add('hidden');
+                currentImage = new Image();
+                currentImage.onload = () => {
+                    const canvas = document.getElementById('previewCanvas');
+                    canvas.width = 512;
+                    canvas.height = 512;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(currentImage, 0, 0, 512, 512);
+                    
+                    document.getElementById('uploadSection').classList.add('hidden');
+                    document.getElementById('previewSection').classList.remove('hidden');
+                    document.getElementById('styleSection').classList.remove('hidden');
+                    document.getElementById('intensitySection').classList.remove('hidden');
+                    document.getElementById('generateSection').classList.remove('hidden');
+                    document.getElementById('resultSection').classList.add('hidden');
+                    document.getElementById('captionSection').classList.add('hidden');
+                    document.getElementById('shareSection').classList.add('hidden');
+                };
+                currentImage.src = e.target.result;
             };
             reader.readAsDataURL(file);
         }
 
-        function openCamera() {
-            document.getElementById('cameraInput').click();
-        }
+        function openCamera() { document.getElementById('cameraInput').click(); }
 
         function resetApp() {
-            currentImage = null;
-            resultImage = null;
-            likes = 0;
-            
+            currentImage = null; resultImage = null; likes = 0;
             document.getElementById('uploadSection').classList.remove('hidden');
             document.getElementById('previewSection').classList.add('hidden');
             document.getElementById('styleSection').classList.add('hidden');
@@ -1180,7 +878,6 @@
             document.getElementById('resultSection').classList.add('hidden');
             document.getElementById('captionSection').classList.add('hidden');
             document.getElementById('shareSection').classList.add('hidden');
-            
             document.getElementById('fileInput').value = '';
             document.getElementById('cameraInput').value = '';
         }
@@ -1190,124 +887,223 @@
             
             const btn = document.getElementById('generateBtn');
             const steps = document.getElementById('stepsIndicator');
-            const dots = steps.querySelectorAll('.step-dot');
+            const stepText = document.getElementById('stepText');
             
             btn.disabled = true;
-            btn.innerHTML = '<div class="spinner"></div><span>Создаём магию...</span>';
+            btn.innerHTML = '<div class="spinner"></div><span>Создаём...</span>';
             steps.classList.remove('hidden');
             
-            // Animate steps
-            const stepTexts = ['Анализ фото...', 'Выделение черт...', 'Применение стиля...', 'Создание шаржа...'];
+            const stepNames = ['Анализ фото...', 'Выделение черт...', 'Применение стиля...', 'Создание шаржа...'];
             for (let i = 0; i < 4; i++) {
-                dots.forEach((d, j) => d.classList.toggle('active', j <= i));
-                btn.innerHTML = `<div class="spinner"></div><span>${stepTexts[i]}</span>`;
-                await new Promise(r => setTimeout(r, 600 + Math.random() * 400));
+                stepText.textContent = stepNames[i];
+                await new Promise(r => setTimeout(r, 400 + Math.random() * 300));
             }
             
-            // Generate result (demo - use placeholder)
-            const canvas = document.createElement('canvas');
+            // Apply style effect
+            const canvas = document.getElementById('resultCanvas');
             canvas.width = 512;
             canvas.height = 512;
             const ctx = canvas.getContext('2d');
             
-            // Create artistic effect
-            const img = new Image();
-            img.onload = () => {
-                // Draw with effects
-                ctx.filter = `saturate(${1 + intensity/50}) contrast(${1 + intensity/100})`;
-                ctx.drawImage(img, 0, 0, 512, 512);
-                
-                // Add style overlay
-                ctx.filter = 'none';
-                ctx.globalAlpha = 0.3;
-                const colors = {
-                    funny: '#ff69b4',
-                    cartoon: '#00bfff',
-                    artistic: '#9370db',
-                    comic: '#ff4500',
-                    sketch: '#808080',
-                    anime: '#ff69b4',
-                    realistic: '#deb887',
-                    celebrity: '#ffd700',
-                    chibi: '#ffb6c1',
-                    grotesque: '#8b0000',
-                    pixel: '#00ff00',
-                    watercolor: '#87ceeb'
-                };
-                ctx.fillStyle = colors[selectedStyle] || '#ff69b4';
-                ctx.fillRect(0, 0, 512, 512);
-                
-                resultImage = canvas.toDataURL('image/png');
-                
-                // Show result
-                document.getElementById('resultImage').src = resultImage;
-                document.getElementById('resultSection').classList.remove('hidden');
-                document.getElementById('captionSection').classList.remove('hidden');
-                document.getElementById('shareSection').classList.remove('hidden');
-                
-                // Update stats
-                stats.totalCreated++;
-                stats.xp += 25;
-                updateLevel();
-                checkAchievements();
-                
-                // Add to history
-                history.unshift({
-                    image: resultImage,
-                    style: selectedStyle,
-                    date: Date.now()
-                });
-                if (history.length > 20) history.pop();
-                
-                saveState();
-                updateUI();
-                
-                // Reset button
-                btn.disabled = false;
-                btn.innerHTML = '<div class="shimmer"></div><span>✨</span><span>Создать шарж</span>';
-                steps.classList.add('hidden');
-            };
-            img.src = currentImage;
+            // Draw original
+            ctx.drawImage(currentImage, 0, 0, 512, 512);
+            
+            // Get image data
+            const imageData = ctx.getImageData(0, 0, 512, 512);
+            const data = imageData.data;
+            
+            const intFactor = intensity / 50;
+            
+            // Apply style-specific effects
+            switch(selectedStyle) {
+                case 'funny':
+                    // Wavy distortion + color boost
+                    ctx.drawImage(currentImage, 0, 0, 512, 512);
+                    ctx.filter = `saturate(${1.5 * intFactor}) contrast(${1.2 * intFactor}) hue-rotate(10deg)`;
+                    ctx.drawImage(canvas, 0, 0);
+                    ctx.filter = 'none';
+                    break;
+                    
+                case 'cartoon':
+                    // Posterize + edge enhance
+                    ctx.filter = `saturate(${1.8 * intFactor}) contrast(${1.4 * intFactor})`;
+                    ctx.drawImage(currentImage, 0, 0, 512, 512);
+                    ctx.filter = 'none';
+                    // Add color overlay
+                    ctx.globalCompositeOperation = 'overlay';
+                    ctx.fillStyle = `rgba(100, 200, 255, ${0.2 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512);
+                    ctx.globalCompositeOperation = 'source-over';
+                    break;
+                    
+                case 'artistic':
+                    // Soft artistic blur + warm tones
+                    ctx.filter = `saturate(${1.3 * intFactor}) brightness(${1.1 * intFactor})`;
+                    ctx.drawImage(currentImage, 0, 0, 512, 512);
+                    ctx.filter = 'none';
+                    ctx.globalCompositeOperation = 'overlay';
+                    ctx.fillStyle = `rgba(255, 200, 150, ${0.3 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512);
+                    ctx.globalCompositeOperation = 'source-over';
+                    break;
+                    
+                case 'comic':
+                    // High contrast + bold colors
+                    ctx.filter = `saturate(${2 * intFactor}) contrast(${1.6 * intFactor})`;
+                    ctx.drawImage(currentImage, 0, 0, 512, 512);
+                    ctx.filter = 'none';
+                    ctx.globalCompositeOperation = 'multiply';
+                    ctx.fillStyle = `rgba(255, 100, 50, ${0.15 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512);
+                    ctx.globalCompositeOperation = 'source-over';
+                    break;
+                    
+                case 'sketch':
+                    // Grayscale + contrast (pencil effect)
+                    ctx.filter = `grayscale(${0.8 * intFactor}) contrast(${1.5 * intFactor})`;
+                    ctx.drawImage(currentImage, 0, 0, 512, 512);
+                    ctx.filter = 'none';
+                    break;
+                    
+                case 'anime':
+                    // Bright colors + smooth
+                    ctx.filter = `saturate(${1.6 * intFactor}) brightness(${1.15 * intFactor}) contrast(${1.2 * intFactor})`;
+                    ctx.drawImage(currentImage, 0, 0, 512, 512);
+                    ctx.filter = 'none';
+                    ctx.globalCompositeOperation = 'soft-light';
+                    ctx.fillStyle = `rgba(255, 150, 200, ${0.25 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512);
+                    ctx.globalCompositeOperation = 'source-over';
+                    break;
+                    
+                case 'realistic':
+                    // Subtle enhancement
+                    ctx.filter = `saturate(${1.2 * intFactor}) contrast(${1.1 * intFactor})`;
+                    ctx.drawImage(currentImage, 0, 0, 512, 512);
+                    ctx.filter = 'none';
+                    break;
+                    
+                case 'celebrity':
+                    // Glamour + golden tones
+                    ctx.filter = `saturate(${1.4 * intFactor}) brightness(${1.1 * intFactor})`;
+                    ctx.drawImage(currentImage, 0, 0, 512, 512);
+                    ctx.filter = 'none';
+                    ctx.globalCompositeOperation = 'overlay';
+                    ctx.fillStyle = `rgba(255, 215, 0, ${0.2 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512);
+                    ctx.globalCompositeOperation = 'source-over';
+                    break;
+                    
+                case 'chibi':
+                    // Cute pastel colors
+                    ctx.filter = `saturate(${1.7 * intFactor}) brightness(${1.2 * intFactor})`;
+                    ctx.drawImage(currentImage, 0, 0, 512, 512);
+                    ctx.filter = 'none';
+                    ctx.globalCompositeOperation = 'soft-light';
+                    ctx.fillStyle = `rgba(255, 182, 193, ${0.35 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512);
+                    ctx.globalCompositeOperation = 'source-over';
+                    break;
+                    
+                case 'grotesque':
+                    // High distortion
+                    ctx.filter = `saturate(${1.5 * intFactor}) contrast(${1.8 * intFactor}) hue-rotate(${30 * intFactor}deg)`;
+                    ctx.drawImage(currentImage, 0, 0, 512, 512);
+                    ctx.filter = 'none';
+                    ctx.globalCompositeOperation = 'overlay';
+                    ctx.fillStyle = `rgba(139, 0, 0, ${0.25 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512);
+                    ctx.globalCompositeOperation = 'source-over';
+                    break;
+                    
+                case 'pixel':
+                    // Pixelate effect
+                    const pixelSize = Math.max(4, Math.floor(16 - (intensity / 10)));
+                    ctx.imageSmoothingEnabled = false;
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = 512 / pixelSize;
+                    tempCanvas.height = 512 / pixelSize;
+                    const tempCtx = tempCanvas.getContext('2d');
+                    tempCtx.drawImage(currentImage, 0, 0, tempCanvas.width, tempCanvas.height);
+                    ctx.drawImage(tempCanvas, 0, 0, 512, 512);
+                    ctx.imageSmoothingEnabled = true;
+                    break;
+                    
+                case 'watercolor':
+                    // Soft watercolor effect
+                    ctx.filter = `saturate(${1.4 * intFactor}) brightness(${1.1 * intFactor})`;
+                    ctx.drawImage(currentImage, 0, 0, 512, 512);
+                    ctx.filter = 'blur(1px)';
+                    ctx.globalAlpha = 0.3;
+                    ctx.drawImage(currentImage, 0, 0, 512, 512);
+                    ctx.filter = 'none';
+                    ctx.globalAlpha = 1;
+                    ctx.globalCompositeOperation = 'soft-light';
+                    ctx.fillStyle = `rgba(135, 206, 235, ${0.3 * intFactor})`;
+                    ctx.fillRect(0, 0, 512, 512);
+                    ctx.globalCompositeOperation = 'source-over';
+                    break;
+            }
+            
+            resultImage = canvas.toDataURL('image/png');
+            
+            // Show result
+            document.getElementById('resultSection').classList.remove('hidden');
+            document.getElementById('captionSection').classList.remove('hidden');
+            document.getElementById('shareSection').classList.remove('hidden');
+            
+            // Update stats
+            stats.totalCreated++;
+            stats.xp += 25;
+            updateLevel();
+            checkAchievements();
+            
+            // Add to history
+            history.unshift({ image: resultImage, style: selectedStyle, date: Date.now() });
+            if (history.length > 20) history.pop();
+            
+            saveState();
+            updateUI();
+            
+            // Reset button
+            btn.disabled = false;
+            btn.innerHTML = '<div class="shimmer"></div><span>✨</span><span>Создать шарж</span>';
+            steps.classList.add('hidden');
+            
+            // Set caption
+            const styleName = STYLES.find(s => s.id === selectedStyle)?.name || '';
+            document.getElementById('captionText').textContent = `Мой портрет в стиле "${styleName}"! 🎨 ${CAPTIONS[Math.floor(Math.random() * CAPTIONS.length)]}`;
         }
 
         function updateLevel() {
             for (let i = LEVEL_XP.length - 1; i >= 0; i--) {
                 if (stats.xp >= LEVEL_XP[i]) {
-                    const newLevel = i + 1;
-                    if (newLevel > stats.level) {
-                        stats.level = newLevel;
-                    }
+                    stats.level = i + 1;
                     break;
                 }
             }
         }
 
         function checkAchievements() {
-            const newAchievements = [];
+            const newA = [];
+            if (stats.totalCreated >= 1 && !stats.achievements.includes('first')) newA.push('first');
+            if (stats.totalCreated >= 10 && !stats.achievements.includes('creative')) newA.push('creative');
+            if (stats.totalCreated >= 50 && !stats.achievements.includes('master')) newA.push('master');
+            if (stats.totalLikes >= 10 && !stats.achievements.includes('popular')) newA.push('popular');
+            if (stats.totalShares >= 5 && !stats.achievements.includes('viral')) newA.push('viral');
             
-            if (stats.totalCreated >= 1 && !stats.achievements.includes('first')) {
-                newAchievements.push('first');
-            }
-            if (stats.totalCreated >= 10 && !stats.achievements.includes('creative')) {
-                newAchievements.push('creative');
-            }
-            if (stats.totalCreated >= 50 && !stats.achievements.includes('master')) {
-                newAchievements.push('master');
-            }
-            
-            if (newAchievements.length > 0) {
-                stats.achievements.push(...newAchievements);
-                const achievement = ACHIEVEMENTS.find(a => a.id === newAchievements[0]);
-                if (achievement) showAchievement(achievement.name);
+            if (newA.length > 0) {
+                stats.achievements.push(...newA);
+                const a = ACHIEVEMENTS.find(x => x.id === newA[0]);
+                if (a) showAchievement(a.name);
                 renderAchievements();
             }
         }
 
         function showAchievement(name) {
-            const popup = document.getElementById('achievementPopup');
             document.getElementById('achievementName').textContent = name;
-            popup.classList.remove('hidden');
-            setTimeout(() => popup.classList.add('hidden'), 3000);
+            document.getElementById('achievementPopup').classList.remove('hidden');
+            setTimeout(() => document.getElementById('achievementPopup').classList.add('hidden'), 3000);
         }
 
         function likeResult() {
@@ -1322,21 +1118,15 @@
         }
 
         function changeCaption() {
-            const styleName = STYLES.find(s => s.id === selectedStyle)?.name || '';
-            const caption = CAPTIONS[Math.floor(Math.random() * CAPTIONS.length)];
-            document.getElementById('captionText').textContent = caption.replace('{style}', styleName);
+            document.getElementById('captionText').textContent = CAPTIONS[Math.floor(Math.random() * CAPTIONS.length)];
         }
 
         function copyCaption() {
-            const text = document.getElementById('captionText').textContent;
-            navigator.clipboard.writeText(text).then(() => {
+            navigator.clipboard.writeText(document.getElementById('captionText').textContent).then(() => {
                 const btn = document.getElementById('copyBtn');
                 btn.classList.add('copied');
                 btn.innerHTML = '✅ Скопировано!';
-                setTimeout(() => {
-                    btn.classList.remove('copied');
-                    btn.innerHTML = '📋 Копировать подпись';
-                }, 2000);
+                setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '📋 Копировать подпись'; }, 2000);
             });
         }
 
@@ -1368,28 +1158,19 @@
 
         function shareMore() {
             if (navigator.share) {
-                navigator.share({
-                    title: 'Мой шарж',
-                    text: document.getElementById('captionText').textContent
-                });
+                navigator.share({ title: 'Мой шарж', text: document.getElementById('captionText').textContent });
             }
         }
 
         function switchTab(tab) {
-            // Update nav
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById('nav' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
-            
-            // Update content
             document.getElementById('createTab').classList.toggle('hidden', tab !== 'create');
             document.getElementById('historyTab').classList.toggle('hidden', tab !== 'history');
             document.getElementById('profileTab').classList.toggle('hidden', tab !== 'profile');
-            
-            // Hide demo notice on other tabs
             document.getElementById('demoNotice').classList.toggle('hidden', tab !== 'create');
         }
 
-        // ===== START =====
         init();
     </script>
 </body>
